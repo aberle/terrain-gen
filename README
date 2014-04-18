@@ -1,0 +1,17 @@
+Nicholas Aberle: Assignment 3
+Time to complete: 3 hours
+
+Compile using:
+  qmake
+  make
+Run using:
+  ./hw03
+Actions:
+  Drag top slider to change theta angle of the cube
+  Drag second slider to change phi angle of the cube
+  Drag third slider to change size of the cube
+      + Note procedural texture remains correctly scaled
+  Enter a number in first text field and it will automatically be multiplied and displayed in the next field (only numbers 0-100 are allowed)
+  Click party on/off radio buttons to turn party mode on! (Cube side colors are randomized using a timer function)
+      + When the shader is enabled, the colors will change
+  Click "Toggle shaders!" button to turn procedural texture shader on or off (on by default)
