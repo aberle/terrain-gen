@@ -3,7 +3,7 @@
  *
  * These algorithms were originally designed by Ken Perlin, but this code has been
  * adapted from the implementations written by Stefan Gustavson (stegu@itn.liu.se)
- * and Eliot Eshelman.
+ * and Eliot Eshelman (http://www.6by9.net/).
  *
  */
 
