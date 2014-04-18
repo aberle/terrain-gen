@@ -1,5 +1,5 @@
 //
-//  Hello Widget
+//  Application Widget
 //
 
 #include <QtGui>
@@ -14,7 +14,7 @@ Application::Application()
    //  Set window title
    setWindowTitle(tr("Nicholas Aberle: Simplex Noise Terrain Generation"));
 
-   //  Create new Cube widget
+   //  Create new terrainView widget
    TerrainView* terrainView = new TerrainView;
 
    //  Create slider and set range to 0-360 (degrees)

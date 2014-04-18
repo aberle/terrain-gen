@@ -1,3 +1,11 @@
+/*
+ * Terrain Generation function declarations
+ *
+ * Based on code from http://www.lighthouse3d.com/opengl/terrain/
+ * to use simplex noise values to calculate the terrain heights rather
+ * than a TGA image file.
+ */
+
 #define TERRAIN_ERROR_INVALID_PARAM		-5
 #define TERRAIN_ERROR_LOADING_IMAGE		-4
 #define TERRAIN_ERROR_MEMORY_PROBLEM	-3

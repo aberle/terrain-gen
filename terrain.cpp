@@ -1,3 +1,11 @@
+/*
+ * Terrain Generation function definitions
+ *
+ * Based on code from http://www.lighthouse3d.com/opengl/terrain/
+ * to use simplex noise values to calculate the terrain heights rather
+ * than a TGA image file.
+ */
+
 #ifdef USEGLEW
 #include <GL/glew.h>
 #endif
@@ -270,7 +278,7 @@ int generateTerrain(int normals)
 		for (j = 0;j < terrainGridWidth; j++) {
 
 			/* compute the height using 2d simplex noise */
-			pointHeight = turbulence(i, j, 100);
+			pointHeight = turbulence(i, j, 64);
 			terrainHeights[i*terrainGridWidth + j] = pointHeight;
 		}
 	
