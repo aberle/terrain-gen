@@ -20,7 +20,7 @@ static float terrainStepWidth = 1.0;
 static float terrainLightPos[4] = {0.0,0.1,0.1,0.0};
 static float terrainDiffuseCol[3] = {1.0,1.0,1.0};
 static float terrainAmbientCol[3] = {0.04,0.04,0.04};
-static int terrainSimLight = 1;
+static int   terrainSimLight = 1;
 
 float n1[3] = {0.0,0.0,0.0},n2[3] = {0.0,0.0,0.0},n3[3] = {0.0,0.0,0.0},n4[3] = {0.0,0.0,0.0};
 
@@ -28,41 +28,41 @@ static void terrainComputeNormals();
 static void terrainNormalize(float *v);
 
 
-void terrainLightPosition(float x, float y, float z,float w) {
-
+void terrainLightPosition(float x, float y, float z,float w) 
+{
 	terrainLightPos[0] = x;
 	terrainLightPos[1] = y;
 	terrainLightPos[2] = z;
 	terrainLightPos[3] = w;
 
-	/* normalise this vector to save time later */
+	// Normalize this vector to save time later
 	if (terrainLightPos[3] == 0.0)
 		terrainNormalize(terrainLightPos);
 }
 
-void terrainDiffuseColor(float r, float g, float b) {
-
+void terrainDiffuseColor(float r, float g, float b) 
+{
 	terrainDiffuseCol[0] = r ;
 	terrainDiffuseCol[1] = g;
 	terrainDiffuseCol[2] = b;
 
 }
 
-void terrainAmbientColor(float r, float g, float b) {
-
+void terrainAmbientColor(float r, float g, float b) 
+{
 	terrainAmbientCol[0] = r;
 	terrainAmbientCol[1] = g;
 	terrainAmbientCol[2] = b;
 }
 
 
-
-int terrainSimulateLighting(int sim) {
-
+int terrainSimulateLighting(int sim) 
+{
 	terrainSimLight = sim;
 
-	/* just in case we don't have normals already */
-	if (terrainNormals == NULL) {
+	// Just in case we don't have normals already
+	if (terrainNormals == NULL) 
+	{
 		terrainNormals = (float *)malloc(terrainGridWidth * terrainGridLength * sizeof(float) * 3);
 		terrainComputeNormals();
 	}
@@ -70,12 +70,11 @@ int terrainSimulateLighting(int sim) {
 		return(TERRAIN_ERROR_MEMORY_PROBLEM);
 	else
 		return(TERRAIN_OK);
-
 }
 
 
-static float *terrainCrossProduct(int x1,int z1,int x2,int z2,int x3,int z3) {
-
+static float *terrainCrossProduct(int x1,int z1,int x2,int z2,int x3,int z3) 
+{
 	float *auxNormal,v1[3],v2[3];
 		
 	v1[0] = (x2-x1) * terrainStepWidth; 
@@ -98,8 +97,8 @@ static float *terrainCrossProduct(int x1,int z1,int x2,int z2,int x3,int z3) {
 	return(auxNormal);
 }
 
-static void terrainNormalize(float *v) {
-
+static void terrainNormalize(float *v) 
+{
 	double d;
 	
 	d = sqrt((v[0]*v[0]) + (v[1]*v[1]) + (v[2]*v[2]));
@@ -109,14 +108,15 @@ static void terrainNormalize(float *v) {
 	v[2] = v[2] / d;
 }
 
-static void terrainAddVector(float *a, float *b) {
-
+static void terrainAddVector(float *a, float *b) 
+{
 	a[0] += b[0];
 	a[1] += b[1];
 	a[2] += b[2];
 }
 
-void terrainComputeNormals() {
+void terrainComputeNormals() 
+{
 
 	float *norm1,*norm2;
 	int i,j,k;
@@ -130,26 +130,31 @@ void terrainComputeNormals() {
 			norm1 = NULL;
 			norm2 = NULL;
 
-			/* normals for the four corners */
-			if (i == 0 && j == 0) {
+			// Normals for the four corners
+			if (i == 0 && j == 0) 
+			{
 				norm1 = terrainCrossProduct(0,0, 0,1, 1,0);	
 				terrainNormalize(norm1);				
 			}
-			else if (j == terrainGridWidth-1 && i == terrainGridLength-1) {
+			else if (j == terrainGridWidth-1 && i == terrainGridLength-1) 
+			{
 				norm1 = terrainCrossProduct(j,i, j,i-1, j-1,i);	
 				terrainNormalize(norm1);				
 			}
-			else if (j == 0 && i == terrainGridLength-1) {
+			else if (j == 0 && i == terrainGridLength-1) 
+			{
 				norm1 = terrainCrossProduct(j,i, j,i-1, j+1,i);	
 				terrainNormalize(norm1);				
 			}
-			else if (j == terrainGridWidth-1 && i == 0) {
+			else if (j == terrainGridWidth-1 && i == 0) 
+			{
 				norm1 = terrainCrossProduct(j,i, j,i+1, j-1,i);	
 				terrainNormalize(norm1);				
 			}
 
-			/* normals for the borders */
-			else if (i == 0) {
+			// Normals for the borders
+			else if (i == 0) 
+			{
 				norm1 = terrainCrossProduct(j,0, j-1,0, j,1);
 				terrainNormalize(norm1);
 				norm2 = terrainCrossProduct(j,0,j,1,j+1,0);
@@ -157,16 +162,17 @@ void terrainComputeNormals() {
 				terrainAddVector(norm1,norm2);
 				free(norm2);
 			}
-			else if (j == 0) {
+			else if (j == 0) 
+			{
 				norm1 = terrainCrossProduct(0,i, 1,i, 0,i-1);
 				terrainNormalize(norm1);
-				norm2 
-					= terrainCrossProduct(0,i, 0,i+1, 1,i);
+				norm2 = terrainCrossProduct(0,i, 0,i+1, 1,i);
 				terrainNormalize(norm2);
 				terrainAddVector(norm1,norm2);
 				free(norm2);
 			}
-			else if (i == terrainGridLength-1) {
+			else if (i == terrainGridLength-1) 
+			{
 				norm1 = terrainCrossProduct(j,i, j,i-1, j+1,i);
 				terrainNormalize(norm1);
 				norm2 = terrainCrossProduct(j,i, j+1,i, j,i-1);
@@ -174,7 +180,8 @@ void terrainComputeNormals() {
 				terrainAddVector(norm1,norm2);
 				free(norm2);
 			}
-			else if (j == terrainGridWidth-1) {
+			else if (j == terrainGridWidth-1) 
+			{
 				norm1 = terrainCrossProduct(j,i, j,i-1, j-1,i);
 				terrainNormalize(norm1);
 				norm2 = terrainCrossProduct(j,i, j-1,i, j,i+1);
@@ -183,8 +190,9 @@ void terrainComputeNormals() {
 				free(norm2);
 			}
 
-			/* normals for the inner vertices using 8 neighbours */
-			else {
+			// Normals for the inner vertices using 8 neighbors
+			else 
+			{
 				norm1 = terrainCrossProduct(j,i, j-1,i, j-1,i+1);
 				terrainNormalize(norm1);
 				norm2 = terrainCrossProduct(j,i, j-1,i+1, j,i+1);
@@ -219,35 +227,33 @@ void terrainComputeNormals() {
 
 			terrainNormalize(norm1);
 			norm1[2] = - norm1[2];
+
 			for (k = 0; k< 3; k++) 
 				terrainNormals[3*(i*terrainGridWidth + j) + k] = norm1[k];
 
 			free(norm1);
-			
-
 		}
 }
-
 
 int generateTerrain(int normals) 
 {
 	int i, j;
 	float pointHeight;
 
-	/* if a terrain already exists, destroy it. */
+	// If terrain already exists, destroy it
 	if (terrainHeights != NULL)
 		terrainDestroy();
 	
-	/* set the width and length of the terrain */
-	terrainGridLength = 1024;
-	terrainGridWidth = 1024;
+	// Set the width and length of the terrain
+	terrainGridLength = NOISE_HEIGHT;
+	terrainGridWidth = NOISE_WIDTH;
 
-	/* alocate memory for the terrain, and check for errors */
+	// Allocate memory for the terrain
 	terrainHeights = (float *)malloc(terrainGridWidth * terrainGridLength * sizeof(float));
 	if (terrainHeights == NULL)
 		return(TERRAIN_ERROR_MEMORY_PROBLEM);
 
-	/* allocate memory for the normals, and check for errors */
+	// Allocate memory for the normals
 	if (normals) 
 	{
 		terrainNormals = (float *)malloc(terrainGridWidth * terrainGridLength * sizeof(float) * 3);
@@ -255,11 +261,11 @@ int generateTerrain(int normals)
 			return(TERRAIN_ERROR_MEMORY_PROBLEM);
 	}
 	else
-			terrainNormals = NULL;
+		terrainNormals = NULL;
 
 	terrainColors = NULL;
 
-	/* fill arrays */
+	// Fill height array with noise values
 	for (i = 0 ; i < terrainGridLength; i++)
 		for (j = 0;j < terrainGridWidth; j++) {
 
@@ -268,22 +274,23 @@ int generateTerrain(int normals)
 			terrainHeights[i*terrainGridWidth + j] = pointHeight;
 		}
 	
-	/* if we want normals then compute them */
+	// If we want normals then compute them
 	if (normals)
 		terrainComputeNormals();
 	
 	return(TERRAIN_OK); 
 }
 
-int terrainScale(float min,float max) {
-
+int terrainScale(float min,float max) 
+{
 	float amp,aux,min1,max1,height;
 	int total,i;
 
 	if (terrainHeights == NULL)
 		return(TERRAIN_ERROR_NOT_INITIALISED);
 
-	if (min > max) {
+	if (min > max) 
+	{
 		aux = min;
 		min = max;
 		max = aux;
@@ -294,25 +301,28 @@ int terrainScale(float min,float max) {
 
 	min1 = terrainHeights[0];
 	max1 = terrainHeights[0];
-	for(i=1;i < total ; i++) {
+	for(i=1;i < total ; i++) 
+	{
 		if (terrainHeights[i] > max1)
 			max1 = terrainHeights[i];
 		if (terrainHeights[i] < min1)
 			min1 = terrainHeights[i];
 	}
-	for(i=0;i < total; i++) {
+	for(i=0;i < total; i++) 
+	{
 		height = (terrainHeights[i] - min1) / (max1-min1);
 		terrainHeights[i] = height * amp - min;
 	}
 	if (terrainNormals != NULL)
 		terrainComputeNormals();
+
 	return(TERRAIN_OK);
 }
 
-
-int terrainDim(float stepWidth, float stepLength) {
-
-	if (stepWidth > 0 && stepLength > 0) {
+int terrainDim(float stepWidth, float stepLength) 
+{
+	if (stepWidth > 0 && stepLength > 0) 
+	{
 		terrainStepWidth = stepWidth;
 		terrainStepLength = stepLength;
 
@@ -326,15 +336,18 @@ int terrainDim(float stepWidth, float stepLength) {
 }
 
 
-static float terrainComputeLightFactor(int i,int j,int offseti, int offsetj) {
-	
+static float terrainComputeLightFactor(int i,int j,int offseti, int offsetj) 
+{	
 	float factor,v[3];
 
-	if (terrainLightPos[3] == 0.0) /* directional light */
+	// Directional light
+	if (terrainLightPos[3] == 0.0)
 	factor = terrainNormals[3*(i * terrainGridWidth + j)] * terrainLightPos[0] +
 				terrainNormals[3*(i * terrainGridWidth + j) +1] * terrainLightPos[1] +
 				terrainNormals[3*(i * terrainGridWidth + j) +2] * terrainLightPos[2];
-	else { /* positional light */
+	// Positional light
+	else 
+	{
 		v[0] = terrainLightPos[0] - (j + offsetj)*terrainStepWidth;
 		v[1] = terrainLightPos[1] - terrainHeights[i*terrainGridWidth + j];
 		v[2] = terrainLightPos[2] - (offseti -i) * terrainStepLength;
@@ -345,11 +358,12 @@ static float terrainComputeLightFactor(int i,int j,int offseti, int offsetj) {
 	}	
 	if (factor < 0)
 		factor = 0;
+
 	return(factor);
 }
 
-int terrainCreateDL(int lighting, int texture) {
-
+int terrainCreateDL(int lighting, int texture) 
+{
 	GLuint terrainDL;
 	float startW,startL,factor;
 	int i,j;//, terrainTexture;
@@ -382,20 +396,24 @@ int terrainCreateDL(int lighting, int texture) {
 		terrainSimLight = 0;
 
 	glNewList(terrainDL,GL_COMPILE);
-	for (i = 0 ; i < terrainGridLength-1; i++) {
+	for (i = 0 ; i < terrainGridLength-1; i++) 
+	{
 		//glEnable(GL_TEXTURE_2D);
 		//glBindTexture(GL_TEXTURE_2D, terrainTexture);
 
 		glBegin(GL_TRIANGLE_STRIP);
 
-		for(j=0; j < terrainGridWidth; j++) {
-			if (terrainSimLight  && terrainColors != NULL) {
+		for(j=0; j < terrainGridWidth; j++) 
+		{
+			if (terrainSimLight  && terrainColors != NULL) 
+			{
 				factor = terrainComputeLightFactor(i+1,j,startL,startW);
 				glColor3f(terrainColors[3*((i+1)*terrainGridWidth + j)] * factor + terrainAmbientCol[0],
 						  terrainColors[3*((i+1)*terrainGridWidth + j)+1] * factor + terrainAmbientCol[1],
 						  terrainColors[3*((i+1)*terrainGridWidth + j)+2] * factor + terrainAmbientCol[2]);
 			}
-			else if (terrainSimLight  && terrainColors == NULL) {
+			else if (terrainSimLight  && terrainColors == NULL) 
+			{
 				factor = terrainComputeLightFactor(i+1,j,startL,startW);
 				glColor3f(terrainDiffuseCol[0] * factor + terrainAmbientCol[0],
 							terrainDiffuseCol[1] * factor + terrainAmbientCol[1],
@@ -419,13 +437,15 @@ int terrainCreateDL(int lighting, int texture) {
 				terrainHeights[(i+1)*terrainGridWidth + (j)],
 				(startL - (i+1))*terrainStepLength);// * stepL);					
 			
-			if (terrainSimLight && !lighting && terrainColors != NULL) {
+			if (terrainSimLight && !lighting && terrainColors != NULL) 
+			{
 				factor = terrainComputeLightFactor(i,j,startL,startW);
 				glColor3f(terrainColors[3*(i*terrainGridWidth + j)] * factor + terrainAmbientCol[0],
 						  terrainColors[3*(i*terrainGridWidth + j)+1] * factor + terrainAmbientCol[1],
 						  terrainColors[3*(i*terrainGridWidth + j)+2] * factor + terrainAmbientCol[2]);
 			}
-			else if (terrainSimLight && !lighting && terrainColors == NULL) {
+			else if (terrainSimLight && !lighting && terrainColors == NULL) 
+			{
 				factor = terrainComputeLightFactor(i,j,startL,startW);
 				glColor3f(terrainDiffuseCol[0] * factor + terrainAmbientCol[0],
 							terrainDiffuseCol[1] * factor + terrainAmbientCol[1],
@@ -455,8 +475,8 @@ int terrainCreateDL(int lighting, int texture) {
 	return(terrainDL);
 }
 
-float terrainGetHeight(int x, int z) {
-
+float terrainGetHeight(int x, int z) 
+{
 	int xt,zt;
 
 	if (terrainHeights == NULL) 
@@ -472,8 +492,8 @@ float terrainGetHeight(int x, int z) {
 }
 
 
-void terrainDestroy() {
-
+void terrainDestroy() 
+{
 	if (terrainHeights != NULL)
 		free(terrainHeights);
 

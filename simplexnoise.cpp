@@ -485,12 +485,12 @@ double smoothNoise(double x, double y)
    double fractY = y - int(y);
    
    //wrap around
-   int x1 = (int(x) + noiseWidth) % noiseWidth;
-   int y1 = (int(y) + noiseHeight) % noiseHeight;
+   int x1 = (int(x) + NOISE_WIDTH) % NOISE_WIDTH;
+   int y1 = (int(y) + NOISE_HEIGHT) % NOISE_HEIGHT;
    
    //neighbor values
-   int x2 = (x1 + noiseWidth - 1) % noiseWidth;
-   int y2 = (y1 + noiseHeight - 1) % noiseHeight;
+   int x2 = (x1 + NOISE_WIDTH - 1) % NOISE_WIDTH;
+   int y2 = (y1 + NOISE_HEIGHT - 1) % NOISE_HEIGHT;
 
    //smooth the noise with bilinear interpolation
    double value = 0.0;

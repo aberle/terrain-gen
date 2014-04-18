@@ -183,8 +183,8 @@ static const int simplex[64][4] = {
     {2,1,0,3},{0,0,0,0},{0,0,0,0},{0,0,0,0},{3,1,0,2},{0,0,0,0},{3,2,0,1},{3,2,1,0}
 };
 
-#define noiseWidth 1024
-#define noiseHeight 1024
+#define NOISE_WIDTH 1024
+#define NOISE_HEIGHT 1024
 
 double smoothNoise(double x, double y);
 double turbulence(double x, double y, double size);
