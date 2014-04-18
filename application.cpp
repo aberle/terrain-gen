@@ -34,51 +34,75 @@ Application::Application()
    //  Create label to show angle
    QLabel* label = new QLabel;
 
-   // Create checkbox
-   QCheckBox* check = new QCheckBox("Lights on");
-   //check->toggle();
-
-   // Create radio buttons
-   QRadioButton* partyOn = new QRadioButton("Party on!");
-   QRadioButton* partyOff = new QRadioButton("Party off :(");
-   partyOff->toggle();
-
    // Create text entry fields
-   QValidator *validator = new QIntValidator(0, 100);
-   QLineEdit* num = new QLineEdit("15");
-   num->setFixedWidth(50);
-   num->setValidator(validator);
-   QLineEdit* m2 = new QLineEdit("30");
-   m2->setFixedWidth(50);
+   QValidator* validator = new QIntValidator(2, 256);
+   QLineEdit* turb = new QLineEdit("64");
+   turb->setFixedWidth(50);
+   turb->setValidator(validator);
+
+   QValidator* validator2 = new QDoubleValidator(1.0, 64.0, 1);
+   QLineEdit* oct = new QLineEdit("1.0");
+   oct->setFixedWidth(50);
+   oct->setValidator(validator2);
+
+   QLineEdit* pers = new QLineEdit("1.0");
+   pers->setFixedWidth(50);
+   pers->setValidator(validator2);
+
+   QLineEdit* amp = new QLineEdit("1.0");
+   amp->setFixedWidth(50);
+   amp->setValidator(validator2);
 
    // Create shader button
-   QPushButton *button = new QPushButton("Toggle shaders!");
+   QPushButton *button = new QPushButton("Toggle Lighting On/Off");
 
    //  Create slider and set range to 10-200
    QSlider* scaleslider = new QSlider(Qt::Horizontal);
-   scaleslider->setRange(10,100);
+   scaleslider->setRange(10,200);
    //  Eye candy - set tick interval for display
    scaleslider->setTickInterval(5);
    scaleslider->setTickPosition(QSlider::TicksBelow);
 
+   //  Set layout of child widgets:
+   // Big controls container
+   QGroupBox* controls = new QGroupBox;
+   QVBoxLayout* controlsLayout = new QVBoxLayout;
 
-   //  Set layout of child widgets
-   QVBoxLayout* layout = new QVBoxLayout;
-   layout->addWidget(new QLabel("Theta angle"));
-   layout->addWidget(hslider);
-   layout->addWidget(new QLabel("\nPhi angle"));
-   layout->addWidget(vslider);
+   // Container for view controls
+   QGroupBox* viewControls = new QGroupBox("View Controls");
+   QVBoxLayout* viewLayout = new QVBoxLayout;
+   viewLayout->addWidget(new QLabel("Theta angle"));
+   viewLayout->addWidget(hslider);
+   viewLayout->addWidget(new QLabel("Phi angle"));
+   viewLayout->addWidget(vslider);
+   viewLayout->addWidget(new QLabel("Scale"));
+   viewLayout->addWidget(scaleslider);
+   viewLayout->addWidget(label);
+   viewControls->setLayout(viewLayout);
+
+   // Container for noise controls
+   QGroupBox* noiseControls = new QGroupBox("Noise Controls");
+   QVBoxLayout* noiseLayout = new QVBoxLayout;
+   noiseLayout->addWidget(new QLabel("Turbulence Passes (2-256)"));
+   noiseLayout->addWidget(turb);
+   noiseLayout->addWidget(new QLabel("Octaves (1.0-64.0)"));
+   noiseLayout->addWidget(oct);
+   noiseLayout->addWidget(new QLabel("Persistence (1.0-64.0)"));
+   noiseLayout->addWidget(pers);
+   noiseLayout->addWidget(new QLabel("Amplitude (1.0-64.0)"));
+   noiseLayout->addWidget(amp);
+   noiseLayout->addWidget(button);
+   noiseControls->setLayout(noiseLayout);
+
+   // Add the sub-containers to the big controls container
+   controlsLayout->addWidget(viewControls);
+   controlsLayout->addWidget(noiseControls);
+   controls->setLayout(controlsLayout);
+
+   // Master layout
+   QHBoxLayout* layout = new QHBoxLayout;
    layout->addWidget(terrainView);
-   layout->addWidget(scaleslider);
-   layout->addWidget(label);
-   //layout->addWidget(check);
-   layout->addWidget(new QLabel("Enter a number!"));
-   layout->addWidget(num);
-   layout->addWidget(new QLabel("Now it is multiplied by 2!"));
-   layout->addWidget(m2);
-   layout->addWidget(partyOn);
-   layout->addWidget(partyOff);
-   layout->addWidget(button);
+   layout->addWidget(controls);
    setLayout(layout);
 
    // Set a timer with a 0 timeout to fake an 'idle' function
@@ -90,18 +114,21 @@ Application::Application()
    connect(hslider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setTheta(int)));
    //  Connect valueChanged() signal of vertical slider to setTheta slot of terrainView
    connect(vslider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setPhi(int)));
-   //  Connect stateChanged() signal of checkbox to turn lights on/off
-   connect(check, SIGNAL(stateChanged(int)) , terrainView , SLOT(toggleLights()));
-   //  Connect message() signal of terrainView to setText slot of label
-   connect(terrainView, SIGNAL(message(QString)) , label , SLOT(setText(QString)));
-   //  Connect isChecked() signal of radio button to turn party mode on
-   connect(partyOn, SIGNAL(toggled(bool)) , terrainView , SLOT(partyMode()));
-   //  Connect textChanged signal of lineEdit to plug into multiply function
-   connect(num, SIGNAL(textChanged(QString)), terrainView , SLOT(multiply(QString)));
-   //  Connect message() signal of terrainView to setText of lineEdit to display result of multiply
-   connect(terrainView, SIGNAL(multMessage(QString)) , m2 , SLOT(setText(QString)));
-   //  Connect clicked() signal of push button to toggle shaders
-   connect(button, SIGNAL(clicked()) , terrainView , SLOT(toggleShaders()));
    //  Connect valueChanged() signal of scale slider to setScale slot of terrainView
    connect(scaleslider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setScale(int)));
+   //  Connect message() signal of terrainView to setText slot of label
+   connect(terrainView, SIGNAL(message(QString)) , label , SLOT(setText(QString)));
+
+   //  Connect textChanged signal of lineEdit to plug into setTurbulence function
+   connect(turb, SIGNAL(textChanged(QString)), terrainView , SLOT(setTurbulence(QString)));
+   //  Connect textChanged signal of lineEdit to plug into setOctaves function
+   connect(oct, SIGNAL(textChanged(QString)), terrainView , SLOT(setOctaves(QString)));
+   //  Connect textChanged signal of lineEdit to plug into setPersistence function
+   connect(pers, SIGNAL(textChanged(QString)), terrainView , SLOT(setPersistence(QString)));
+   //  Connect textChanged signal of lineEdit to plug into setAmplitude function
+   connect(amp, SIGNAL(textChanged(QString)), terrainView , SLOT(setAmplitude(QString)));
+   
+   //  Connect clicked() signal of push button to toggle lights
+   connect(button, SIGNAL(clicked()) , terrainView , SLOT(toggleLights()));
+   
 }

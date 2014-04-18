@@ -26,17 +26,26 @@ TerrainView::TerrainView(QWidget* parent)
    specular  =   0;  // Specular intensity (%)
    shininess =   0;  // Shininess (power of two)
    light     =   1;  // Lighting enabled
+   lightPos[0] = 0.0;
+   lightPos[1] = 2.0;
+   lightPos[2] = 0.0;
+   lightPos[3] = 1.0;
+   
    shaders   =   1;  // Shaders on/off
-
-   scale = 0.10;
-
+   scale = 0.05;
    usingTexture = 0;
+
+   // noise params
+   turbulencePasses = 32;
+   octaves = 1.0;
+   persistence = 1.0;
+   amplitude = 1.0;
 }
 
-void TerrainView::initTerrain()
+void TerrainView::initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude)
 {
    int createNormals = 1;
-   if (generateTerrain(createNormals) != TERRAIN_OK)
+   if (generateTerrain(createNormals, turbulencePasses, octaves, persistence, amplitude) != TERRAIN_OK)
    {
       printf("Error generating noise-based terrain\n");
       exit(-1);
@@ -52,7 +61,7 @@ void TerrainView::initTerrain()
 void TerrainView::setScale(int new_scale)
 {
    //  Set scale
-   scale = float(float(new_scale)/100);
+   scale = float(float(new_scale)/200);
    //  Request redisplay
    updateGL();
 }
@@ -91,16 +100,6 @@ void TerrainView::toggleLights()
 }
 
 //
-//  Turn party mode on/off
-//
-void TerrainView::partyMode()
-{
-   party = 1-party;
-   //  Request redisplay
-   updateGL();
-}
-
-//
 //  Turn shaders on/off
 //
 void TerrainView::toggleShaders()
@@ -117,7 +116,7 @@ void TerrainView::initializeGL()
 {
    //  Enable Z-buffer depth testing
    glEnable(GL_DEPTH_TEST);
-   initTerrain();
+   initTerrain(turbulencePasses, 1.0, 1.0, 1.0);
 
    //  Build shader
    /*if (!shader.addShaderFromSourceFile(QGLShader::Vertex,"light.vert"))
@@ -150,12 +149,43 @@ void TerrainView::resizeGL(int width, int height)
 
 void TerrainView::idle()
 {
-   //updateGL();
+   //lightPos[2] = cos(time(NULL));
+   updateGL();
 }
 
-void TerrainView::multiply(QString val)
+void TerrainView::setTurbulence(QString val)
 {
-   emit multMessage(QString::number(val.toInt()*2));
+   int value = val.toInt();
+   turbulencePasses = value;
+
+   initTerrain(turbulencePasses, octaves, persistence, amplitude);
+   updateGL();
+}
+
+void TerrainView::setOctaves(QString val)
+{
+   double value = val.toDouble();
+   octaves = value;
+
+   initTerrain(turbulencePasses, octaves, persistence, amplitude);
+   updateGL();
+}
+
+void TerrainView::setPersistence(QString val)
+{
+   double value = val.toDouble();
+   persistence = value;
+
+   initTerrain(turbulencePasses, octaves, persistence, amplitude);
+   updateGL();
+}
+void TerrainView::setAmplitude(QString val)
+{
+   double value = val.toDouble();
+   amplitude = value;
+
+   initTerrain(turbulencePasses, octaves, persistence, amplitude);
+   updateGL();
 }
 
 //
@@ -189,8 +219,7 @@ void TerrainView::paintGL()
       float Ambient[]   = {0.01*ambient ,0.01*ambient ,0.01*ambient ,1.0};
       float Diffuse[]   = {0.01*diffuse ,0.01*diffuse ,0.01*diffuse ,1.0};
       float Specular[]  = {0.01*specular,0.01*specular,0.01*specular,1.0};
-      //  Light position
-      float Position[]  = {0,2,0,1.0}; // or 5*cos, 5*sin
+      
       //  OpenGL should normalize normal vectors
       glEnable(GL_NORMALIZE);
       //  Enable lighting
@@ -206,7 +235,7 @@ void TerrainView::paintGL()
       glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
       glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
       glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
-      glLightfv(GL_LIGHT0,GL_POSITION,Position);
+      glLightfv(GL_LIGHT0,GL_POSITION,lightPos);
    }
    else
      glDisable(GL_LIGHTING);
@@ -247,7 +276,7 @@ void TerrainView::paintGL()
    glRotated(theta,0,1,0);
    glRotated(phi,1,0,0);
 
-   glScalef(scale*0.1,scale*0.1,scale*0.1);
+   glScalef(scale*0.05,scale*0.05,scale*0.05);
 
    glColor3f(0.00, 0.75, 1.00);
    glCallList(terrainDL);

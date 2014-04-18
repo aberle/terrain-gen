@@ -12,8 +12,8 @@
 
 #include <math.h>
 
-#define NOISE_WIDTH 768
-#define NOISE_HEIGHT 768
+#define NOISE_WIDTH 512
+#define NOISE_HEIGHT 512
 
 /* 2D, 3D, and 4D Simplex Noise functions return values in (-1, 1).
 
@@ -178,8 +178,8 @@ static const int simplex[64][4] =
 };
 
 // Smoothing function using bilinear interpolation
-double smoothNoise(double x, double y);
+double smoothNoise(double x, double y, float octaves, float persistence, float amplitude);
 // Turbulence function that combines multiple noise layers for smooth features
-double turbulence(double x, double y, double size);
+double turbulence(double x, double y, double size, float octaves, float persistence, float amplitude);
 
 #endif

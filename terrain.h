@@ -13,7 +13,7 @@
 #define TERRAIN_ERROR_NOT_INITIALISED	-1
 #define TERRAIN_OK						 0
 
-int generateTerrain(int normals);
+int generateTerrain(int normals, int turbulencePasses, float octaves, float persistence, float amplitude);
 int terrainCreateDL(int lighting, int texture);
 void terrainDestroy();
 int terrainScale(float min,float max);

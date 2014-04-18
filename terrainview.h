@@ -39,6 +39,14 @@ private:
     int usingTexture;
     int usingMap;
 
+    //  Light position
+    float lightPos[4];
+
+    int turbulencePasses;
+    double octaves;
+    double persistence;
+    double amplitude;
+
 //  Public access to this widget
 public:
     TerrainView(QWidget* parent=0);                      //  Constructor
@@ -46,15 +54,17 @@ public:
 
 //  Communications with other widgets
 public slots:
-    void setTheta(int angle);      //  Slot to set horizontal angle
-    void setPhi(int angle);        //  Slot to set vertical angle
-    void toggleLights();           //  Slot to toggle lights on/off
-    void idle();                   //  Slot for idle function
-    void partyMode();              //  Slot for turning party mode on/off
-    void multiply(QString val);    //  Slot for multiplying a number by 2
-    void toggleShaders();          //  Slot for toggling shaders
-    void setScale(int new_scale);  //  Slot for changing terrain size
-    void initTerrain();
+    void setTheta(int angle);          //  Slot to set horizontal angle
+    void setPhi(int angle);            //  Slot to set vertical angle
+    void toggleLights();               //  Slot to toggle lights on/off
+    void idle();                       //  Slot for idle function
+    void setTurbulence(QString val);   //  Slot for setting turbulence factor
+    void setOctaves(QString val);      //  Slot for setting octaves
+    void setPersistence(QString val);  //  Slot for setting persistence
+    void setAmplitude(QString val);    //  Slot for setting amplitude
+    void toggleShaders();              //  Slot for toggling shaders
+    void setScale(int new_scale);      //  Slot for changing terrain size
+    void initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude);
 signals:
     void message(QString text);    //  Signal for messages
     void multMessage(QString text);

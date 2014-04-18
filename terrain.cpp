@@ -243,7 +243,7 @@ void terrainComputeNormals()
 		}
 }
 
-int generateTerrain(int normals) 
+int generateTerrain(int normals, int turbulencePasses, float octaves, float persistence, float amplitude)
 {
 	int i, j;
 	float pointHeight;
@@ -275,10 +275,10 @@ int generateTerrain(int normals)
 
 	// Fill height array with noise values
 	for (i = 0 ; i < terrainGridLength; i++)
-		for (j = 0;j < terrainGridWidth; j++) {
-
-			/* compute the height using 2d simplex noise */
-			pointHeight = turbulence(i, j, 64);
+		for (j = 0;j < terrainGridWidth; j++) 
+		{
+			// Compute the height using 2d simplex noise
+			pointHeight = turbulence(i, j, turbulencePasses, octaves, persistence, amplitude);
 			terrainHeights[i*terrainGridWidth + j] = pointHeight;
 		}
 	

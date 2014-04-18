@@ -517,7 +517,7 @@ float dot( const int* g, const float x, const float y, const float z ) { return 
 float dot( const int* g, const float x, const float y, const float z, const float w ) { return g[0]*x + g[1]*y + g[2]*z + g[3]*w; }
 
 
-double smoothNoise(double x, double y)
+double smoothNoise(double x, double y, float octaves, float persistence, float amplitude)
 {  
    // Get fractional part of x and y
    double fractX = x - int(x);
@@ -533,21 +533,21 @@ double smoothNoise(double x, double y)
 
    // Smooth the noise with bilinear interpolation
    double value = 0.0;
-   value += fractX       * fractY       * octave_noise_2d(1.0, 1.0, 1.0,x1,y1);
-   value += fractX       * (1 - fractY) * octave_noise_2d(1.0, 1.0, 1.0,x1,y2);
-   value += (1 - fractX) * fractY       * octave_noise_2d(1.0, 1.0, 1.0,x2,y1);
-   value += (1 - fractX) * (1 - fractY) * octave_noise_2d(1.0, 1.0, 1.0,x2,y2);
+   value += fractX       * fractY       * octave_noise_2d(octaves, persistence, amplitude,x1,y1);
+   value += fractX       * (1 - fractY) * octave_noise_2d(octaves, persistence, amplitude,x1,y2);
+   value += (1 - fractX) * fractY       * octave_noise_2d(octaves, persistence, amplitude,x2,y1);
+   value += (1 - fractX) * (1 - fractY) * octave_noise_2d(octaves, persistence, amplitude,x2,y2);
 
    return value;
 }
 
-double turbulence(double x, double y, double size)
+double turbulence(double x, double y, double size, float octaves, float persistence, float amplitude)
 {
     double value = 0.0, initialSize = size;
     
     while(size >= 1)
     {
-        value += smoothNoise(x / size, y / size) * size;
+        value += smoothNoise(x / size, y / size, octaves, persistence, amplitude) * size;
         size /= 2.0;
     }
     
