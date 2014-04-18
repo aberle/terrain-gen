@@ -1,10 +1,12 @@
-=Nicholas Aberle: Simplex Noise Terrain Generation=
+# Nicholas Aberle: Simplex Noise Terrain Generation
 
 Compile using:
-  `qmake`
-  `make`
+* `qmake`
+* `make`
+
 Run using:
   `./tGen`
+
 Actions:
   Drag top slider to change theta angle of the terrain
   Drag second slider to change phi angle of the terrain
