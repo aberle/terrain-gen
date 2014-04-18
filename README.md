@@ -8,6 +8,6 @@
 ```
 
 ### Actions
-* Drag top slider to change theta angle of the terrain
+* Drag first slider to change theta angle of the terrain
 * Drag second slider to change phi angle of the terrain
 * Drag third slider to change size of the terrain
