@@ -9,6 +9,7 @@
 #include <QString>
 #include <QGLShaderProgram>
 #include <iostream>
+#include <QMatrix4x4>
 
 class TerrainView : public QGLWidget
 {
@@ -46,6 +47,8 @@ private:
     double octaves;
     double persistence;
     double amplitude;
+
+    QMatrix4x4 projection;
 
 //  Public access to this widget
 public:

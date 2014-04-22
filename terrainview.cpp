@@ -41,6 +41,8 @@ TerrainView::TerrainView(QWidget* parent)
    octaves = 1.0;
    persistence = 1.0;
    amplitude = 1.0;
+
+   projection = QMatrix4x4();
 }
 
 void TerrainView::initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude)
@@ -137,13 +139,23 @@ void TerrainView::resizeGL(int width, int height)
    //  Viewport is whole screen
    glViewport(0,0,width,height);
 
+   /*
    //  Orthogonal projection to 2
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
    glOrtho(-2*asp, +2*asp, -2, +2, -2, +2);
 
    //  Back to model view
-   glMatrixMode(GL_MODELVIEW);
+   glMatrixMode(GL_MODELVIEW);*/
+
+   // Set near plane to 3.0, far plane to 7.0, field of view 45 degrees
+   const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
+
+   // Reset projection
+   projection.setToIdentity();
+
+   // Set perspective projection
+   projection.perspective(fov, asp, zNear, zFar);
 }
 
 void TerrainView::idle()
