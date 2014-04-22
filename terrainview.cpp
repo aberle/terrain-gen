@@ -55,7 +55,7 @@ void TerrainView::initTerrain(int turbulencePasses, float octaves, float persist
       printf("Error generating noise-based terrain\n");
       exit(-1);
    }
-   terrainScale(0,105);
+   terrainScale(0,100);
    terrainDL = terrainCreateDL(light,usingTexture);
 }
 
@@ -221,6 +221,27 @@ void TerrainView::setAmplitude(QString val)
    amplitude = value;
 }
 
+void TerrainView::mouseMoveEvent(QMouseEvent* event) 
+{
+   static int lastX = 0;
+   static int lastY = 0;
+
+   int newX = event->pos().x();
+   int newY = event->pos().y();
+
+   int deltaX = newX - lastX;
+   int deltaY = newY - lastY;
+
+   theta += deltaX*.001;
+   phi += deltaY*.001;
+
+   //printf("delta x: %d\n", deltaX);
+   //printf("delta y: %d\n\n", deltaY);
+
+   lastX = newX;
+   lastY = newY;
+}
+
 //
 //  Draw the window
 //
@@ -283,7 +304,7 @@ void TerrainView::paintGL()
      glDisable(GL_LIGHTING);
    
    // Orthogonal projection
-   glScaled(1,1,1);
+   //glScaled(1,1,1);
    /*glRotated(theta,0,1,0);
    glRotated(phi,1,0,0);*/
 

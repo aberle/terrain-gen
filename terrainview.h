@@ -16,8 +16,8 @@ class TerrainView : public QGLWidget
 Q_OBJECT
 //  Private data
 private:
-    int  theta;         //  Horizontal rotation angle
-    int  phi;           //  Vertical rotation angle
+    float  theta;       //  Horizontal rotation angle
+    float  phi;         //  Vertical rotation angle
     bool texture;       //  Color/Texture toggle
     int emission;       //  Emission intensity (%)
     int ambient;        //  Ambient intensity (%)
@@ -77,6 +77,7 @@ protected:
     void initializeGL();                   //  Initialize widget
     void resizeGL(int width, int height);  //  Resize widget
     void paintGL();                        //  Draw widget
+    void mouseMoveEvent(QMouseEvent* event); // Capture mouse movement
 };
 
 #endif
