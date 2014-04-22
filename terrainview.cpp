@@ -33,7 +33,7 @@ TerrainView::TerrainView(QWidget* parent)
    lightPos[3] = 1.0;
    
    shaders   =   1;  // Shaders on/off
-   scale = 0.05;
+   scale = 0.2;
    usingTexture = 0;
 
    // noise params
@@ -302,15 +302,9 @@ void TerrainView::paintGL()
    }
    else
      glDisable(GL_LIGHTING);
-   
-   // Orthogonal projection
-   //glScaled(1,1,1);
-   /*glRotated(theta,0,1,0);
-   glRotated(phi,1,0,0);*/
 
-   shaders = 0;
+   shaders = 1;
 
-   /*
    if (shaders)
    {
       shader.bind();
@@ -323,27 +317,24 @@ void TerrainView::paintGL()
       {
         printf("failed to share rando with shader!");
       }
-      //  TerrainView
-      glBegin(GL_QUADS);
-      //  End
-      glEnd();
+
+      //  Undo transofrmations
+      glPopMatrix();
+
+      // Draw the terrain
+      glPushMatrix();
+
+      glRotated(theta,0,1,0);
+      glRotated(phi,1,0,0);
+
+      glScalef(scale*0.05,scale*0.05,scale*0.05);
+
+      glColor3f(0.00, 0.75, 1.00);
+      glCallList(terrainDL);
+      glPopMatrix();
+
       shader.release();
-   }*/
-
-   //  Undo transofrmations
-   glPopMatrix();
-
-   // Draw the terrain
-   glPushMatrix();
-
-   glRotated(theta,0,1,0);
-   glRotated(phi,1,0,0);
-
-   glScalef(scale*0.05,scale*0.05,scale*0.05);
-
-   glColor3f(0.00, 0.75, 1.00);
-   glCallList(terrainDL);
-   glPopMatrix();
+   }
 
    //  Draw light position as sphere
    glDisable(GL_LIGHTING);
