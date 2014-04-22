@@ -56,7 +56,7 @@ public:
 public slots:
     void setTheta(int angle);          //  Slot to set horizontal angle
     void setPhi(int angle);            //  Slot to set vertical angle
-    void toggleLights();               //  Slot to toggle lights on/off
+    void reGenTerrain();               //  Slot to regenerate terrain
     void idle();                       //  Slot for idle function
     void setTurbulence(QString val);   //  Slot for setting turbulence factor
     void setOctaves(QString val);      //  Slot for setting octaves

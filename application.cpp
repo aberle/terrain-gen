@@ -54,7 +54,7 @@ Application::Application()
    amp->setValidator(validator2);
 
    // Create shader button
-   QPushButton *button = new QPushButton("Toggle Lighting On/Off");
+   QPushButton *button = new QPushButton("Regenerate Terrain");
 
    //  Create slider and set range to 10-200
    QSlider* scaleslider = new QSlider(Qt::Horizontal);
@@ -129,6 +129,6 @@ Application::Application()
    connect(amp, SIGNAL(textChanged(QString)), terrainView , SLOT(setAmplitude(QString)));
    
    //  Connect clicked() signal of push button to toggle lights
-   connect(button, SIGNAL(clicked()) , terrainView , SLOT(toggleLights()));
+   connect(button, SIGNAL(clicked()) , terrainView , SLOT(reGenTerrain()));
    
 }

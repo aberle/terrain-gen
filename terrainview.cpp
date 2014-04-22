@@ -4,6 +4,7 @@
 #include <QtOpenGL>
 #include "terrainview.h"
 #include "terrain.h"
+#include <GL/glut.h>
 
 extern float *terrainHeights;
 
@@ -27,7 +28,7 @@ TerrainView::TerrainView(QWidget* parent)
    shininess =   0;  // Shininess (power of two)
    light     =   1;  // Lighting enabled
    lightPos[0] = 0.0;
-   lightPos[1] = 2.0;
+   lightPos[1] = 1.0;
    lightPos[2] = 0.0;
    lightPos[3] = 1.0;
    
@@ -91,11 +92,9 @@ void TerrainView::setPhi(int angle)
 //
 //  Turn lights on/off
 //
-void TerrainView::toggleLights()
+void TerrainView::reGenTerrain()
 {
-   //  Toggle lights
-   light = 1-light;
-   //  Request redisplay
+   initTerrain(turbulencePasses, octaves, persistence, amplitude);
    updateGL();
 }
 
@@ -119,12 +118,12 @@ void TerrainView::initializeGL()
    initTerrain(turbulencePasses, 1.0, 1.0, 1.0);
 
    //  Build shader
-   /*if (!shader.addShaderFromSourceFile(QGLShader::Vertex,"light.vert"))
+   if (!shader.addShaderFromSourceFile(QGLShader::Vertex,"light.vert"))
       exit(-1);
    if (!shader.addShaderFromSourceFile(QGLShader::Fragment,"checkers.frag"))
       exit(-1);
    if (!shader.link())
-      exit(-1);*/
+      exit(-1);
 }
 
 //
@@ -149,7 +148,7 @@ void TerrainView::resizeGL(int width, int height)
 
 void TerrainView::idle()
 {
-   //lightPos[2] = cos(time(NULL));
+   lightPos[0] = cos(time(NULL));
    updateGL();
 }
 
@@ -157,35 +156,88 @@ void TerrainView::setTurbulence(QString val)
 {
    int value = val.toInt();
    turbulencePasses = value;
-
-   initTerrain(turbulencePasses, octaves, persistence, amplitude);
-   updateGL();
 }
 
 void TerrainView::setOctaves(QString val)
 {
    double value = val.toDouble();
    octaves = value;
-
-   initTerrain(turbulencePasses, octaves, persistence, amplitude);
-   updateGL();
 }
 
 void TerrainView::setPersistence(QString val)
 {
    double value = val.toDouble();
    persistence = value;
-
-   initTerrain(turbulencePasses, octaves, persistence, amplitude);
-   updateGL();
 }
 void TerrainView::setAmplitude(QString val)
 {
    double value = val.toDouble();
    amplitude = value;
+}
 
-   initTerrain(turbulencePasses, octaves, persistence, amplitude);
-   updateGL();
+/*
+ *  Draw a cube
+ */
+static void Cube(float x,float y,float z , float th,float ph , float D)
+{
+   //  Transform
+   glPushMatrix();
+   glTranslated(x,y,z);
+   glRotated(ph,1,0,0);
+   glRotated(th,0,1,0);
+   glScaled(D,D,D);
+
+   //  Front
+   glNormal3f( 0, 0, 1);
+   glBegin(GL_QUADS);
+   glTexCoord2f(0,0); glVertex3f(-1,-1, 1);
+   glTexCoord2f(1,0); glVertex3f(+1,-1, 1);
+   glTexCoord2f(1,1); glVertex3f(+1,+1, 1);
+   glTexCoord2f(0,1); glVertex3f(-1,+1, 1);
+   glEnd();
+   //  Back
+   glNormal3f( 0, 0,-1);
+   glBegin(GL_QUADS);
+   glTexCoord2f(0,0); glVertex3f(+1,-1,-1);
+   glTexCoord2f(1,0); glVertex3f(-1,-1,-1);
+   glTexCoord2f(1,1); glVertex3f(-1,+1,-1);
+   glTexCoord2f(0,1); glVertex3f(+1,+1,-1);
+   glEnd();
+   //  Right
+   glNormal3f(+1, 0, 0);
+   glBegin(GL_QUADS);
+   glTexCoord2f(0,0); glVertex3f(+1,-1,+1);
+   glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
+   glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
+   glTexCoord2f(0,1); glVertex3f(+1,+1,+1);
+   glEnd();
+   //  Left
+   glNormal3f(-1, 0, 0);
+   glBegin(GL_QUADS);
+   glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
+   glTexCoord2f(1,0); glVertex3f(-1,-1,+1);
+   glTexCoord2f(1,1); glVertex3f(-1,+1,+1);
+   glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+   glEnd();
+   //  Top
+   glNormal3f( 0,+1, 0);
+   glBegin(GL_QUADS);
+   glTexCoord2f(0,0); glVertex3f(-1,+1,+1);
+   glTexCoord2f(1,0); glVertex3f(+1,+1,+1);
+   glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
+   glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+   glEnd();
+   //  Bottom
+   glNormal3f( 0,-1, 0);
+   glBegin(GL_QUADS);
+   glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
+   glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
+   glTexCoord2f(1,1); glVertex3f(+1,-1,+1);
+   glTexCoord2f(0,1); glVertex3f(-1,-1,+1);
+   glEnd();
+
+   // Restore
+   glPopMatrix();
 }
 
 //
@@ -268,6 +320,13 @@ void TerrainView::paintGL()
    }*/
 
    //  Undo transofrmations
+   glPopMatrix();
+
+   //  Draw light position as sphere
+   glColor3f(1,1,1);
+   glPushMatrix();
+   //glTranslated(lightPos[0],lightPos[1],lightPos[2]);
+   Cube(lightPos[0],lightPos[1],lightPos[2] , 0, 0  , 0.01    );
    glPopMatrix();
 
    // Draw the terrain
