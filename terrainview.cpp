@@ -27,8 +27,8 @@ TerrainView::TerrainView(QWidget* parent)
    specular  =   0;  // Specular intensity (%)
    shininess =   0;  // Shininess (power of two)
    light     =   1;  // Lighting enabled
-   lightPos[0] = 0.0;
-   lightPos[1] = 1.0;
+   lightPos[0] = 0.0;// Light position
+   lightPos[1] = 0.75;
    lightPos[2] = 0.0;
    lightPos[3] = 1.0;
    
@@ -42,6 +42,8 @@ TerrainView::TerrainView(QWidget* parent)
    persistence = 1.0;
    amplitude = 1.0;
 
+   // camera
+   dim = 6.0;
    projection = QMatrix4x4();
 }
 
@@ -115,8 +117,15 @@ void TerrainView::toggleShaders()
 //
 void TerrainView::initializeGL()
 {
+   int argc = 1;
+   char* argv[2] = {(char*)"tGen", NULL};
+   glutInit(&argc, argv);
+
    //  Enable Z-buffer depth testing
    glEnable(GL_DEPTH_TEST);
+   glDepthFunc(GL_LEQUAL);
+   glPolygonOffset(4,0);
+
    initTerrain(turbulencePasses, 1.0, 1.0, 1.0);
 
    //  Build shader
@@ -136,6 +145,9 @@ void TerrainView::resizeGL(int width, int height)
    //  Window aspect ratio
    float asp= height ? width / (float)height : 1;
 
+   // Field of view
+   float fov = 60.0;
+
    //  Viewport is whole screen
    glViewport(0,0,width,height);
 
@@ -146,21 +158,43 @@ void TerrainView::resizeGL(int width, int height)
    glOrtho(-2*asp, +2*asp, -2, +2, -2, +2);
 
    //  Back to model view
-   glMatrixMode(GL_MODELVIEW);*/
+   glMatrixMode(GL_MODELVIEW);
 
-   // Set near plane to 3.0, far plane to 7.0, field of view 45 degrees
-   const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
+   // Set near plane to 4.0, far plane to 4.0, field of view 60 degrees
+   const qreal zNear = 4.0, zFar = 4.0, fov = 60.0;
 
    // Reset projection
    projection.setToIdentity();
 
    // Set perspective projection
-   projection.perspective(fov, asp, zNear, zFar);
+   projection.perspective(fov, asp, zNear, zFar);*/
+
+   //  Tell OpenGL we want to manipulate the projection matrix
+   glMatrixMode(GL_PROJECTION);
+   //  Undo previous transformations
+   glLoadIdentity();
+   //  Perspective transformation
+   if (fov)
+      gluPerspective(fov,asp,dim/16,16*dim);
+   //  Orthogonal transformation
+   else
+      glOrtho(-asp*dim,asp*dim,-dim,+dim,-dim,+dim);
+   //  Switch to manipulating the model matrix
+   glMatrixMode(GL_MODELVIEW);
+   //  Undo previous transformations
+   glLoadIdentity();
 }
 
 void TerrainView::idle()
 {
-   lightPos[0] = cos(time(NULL));
+   //  Elapsed time in seconds
+   double t = glutGet(GLUT_ELAPSED_TIME)/50000.0;
+   double az = fmod(90*t,1440.0);
+
+   //  Set light position
+   lightPos[0] = 0.5*cos(az);
+   lightPos[2] = 0.5*sin(az);
+
    updateGL();
 }
 
@@ -187,71 +221,6 @@ void TerrainView::setAmplitude(QString val)
    amplitude = value;
 }
 
-/*
- *  Draw a cube
- */
-static void Cube(float x,float y,float z , float th,float ph , float D)
-{
-   //  Transform
-   glPushMatrix();
-   glTranslated(x,y,z);
-   glRotated(ph,1,0,0);
-   glRotated(th,0,1,0);
-   glScaled(D,D,D);
-
-   //  Front
-   glNormal3f( 0, 0, 1);
-   glBegin(GL_QUADS);
-   glTexCoord2f(0,0); glVertex3f(-1,-1, 1);
-   glTexCoord2f(1,0); glVertex3f(+1,-1, 1);
-   glTexCoord2f(1,1); glVertex3f(+1,+1, 1);
-   glTexCoord2f(0,1); glVertex3f(-1,+1, 1);
-   glEnd();
-   //  Back
-   glNormal3f( 0, 0,-1);
-   glBegin(GL_QUADS);
-   glTexCoord2f(0,0); glVertex3f(+1,-1,-1);
-   glTexCoord2f(1,0); glVertex3f(-1,-1,-1);
-   glTexCoord2f(1,1); glVertex3f(-1,+1,-1);
-   glTexCoord2f(0,1); glVertex3f(+1,+1,-1);
-   glEnd();
-   //  Right
-   glNormal3f(+1, 0, 0);
-   glBegin(GL_QUADS);
-   glTexCoord2f(0,0); glVertex3f(+1,-1,+1);
-   glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
-   glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
-   glTexCoord2f(0,1); glVertex3f(+1,+1,+1);
-   glEnd();
-   //  Left
-   glNormal3f(-1, 0, 0);
-   glBegin(GL_QUADS);
-   glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
-   glTexCoord2f(1,0); glVertex3f(-1,-1,+1);
-   glTexCoord2f(1,1); glVertex3f(-1,+1,+1);
-   glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
-   glEnd();
-   //  Top
-   glNormal3f( 0,+1, 0);
-   glBegin(GL_QUADS);
-   glTexCoord2f(0,0); glVertex3f(-1,+1,+1);
-   glTexCoord2f(1,0); glVertex3f(+1,+1,+1);
-   glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
-   glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
-   glEnd();
-   //  Bottom
-   glNormal3f( 0,-1, 0);
-   glBegin(GL_QUADS);
-   glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
-   glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
-   glTexCoord2f(1,1); glVertex3f(+1,-1,+1);
-   glTexCoord2f(0,1); glVertex3f(-1,-1,+1);
-   glEnd();
-
-   // Restore
-   glPopMatrix();
-}
-
 //
 //  Draw the window
 //
@@ -267,6 +236,15 @@ void TerrainView::paintGL()
 
    //  Reset transformations
    glLoadIdentity();
+
+   //  Eye position
+   float eX = -1*dim*sin(theta)*cos(phi);
+   float eY = +1*dim           *sin(phi);
+   float eZ = +1*dim*cos(theta)*cos(phi);
+
+   gluLookAt(eX,eY,eZ, // eye vector
+             0, 0, 0,  // look at vector
+             0, 1, 0); // up vector
    
    glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,shinyvec);
    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
@@ -306,8 +284,8 @@ void TerrainView::paintGL()
    
    // Orthogonal projection
    glScaled(1,1,1);
-   glRotated(theta,0,1,0);
-   glRotated(phi,1,0,0);
+   /*glRotated(theta,0,1,0);
+   glRotated(phi,1,0,0);*/
 
    shaders = 0;
 
@@ -334,13 +312,6 @@ void TerrainView::paintGL()
    //  Undo transofrmations
    glPopMatrix();
 
-   //  Draw light position as sphere
-   glColor3f(1,1,1);
-   glPushMatrix();
-   //glTranslated(lightPos[0],lightPos[1],lightPos[2]);
-   Cube(lightPos[0],lightPos[1],lightPos[2] , 0, 0  , 0.01    );
-   glPopMatrix();
-
    // Draw the terrain
    glPushMatrix();
 
@@ -351,6 +322,14 @@ void TerrainView::paintGL()
 
    glColor3f(0.00, 0.75, 1.00);
    glCallList(terrainDL);
+   glPopMatrix();
+
+   //  Draw light position as sphere
+   glDisable(GL_LIGHTING);
+   glColor3f(1,1,1);
+   glPushMatrix();
+   glTranslated(lightPos[0],lightPos[1],lightPos[2]);
+   glutSolidSphere(0.02,10,10);
    glPopMatrix();
 
    //  Emit message to display
