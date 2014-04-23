@@ -71,10 +71,10 @@ Application::Application()
    // Container for view controls
    QGroupBox* viewControls = new QGroupBox("View Controls");
    QVBoxLayout* viewLayout = new QVBoxLayout;
-   /*viewLayout->addWidget(new QLabel("Theta angle"));
+   viewLayout->addWidget(new QLabel("Theta angle"));
    viewLayout->addWidget(hslider);
    viewLayout->addWidget(new QLabel("Phi angle"));
-   viewLayout->addWidget(vslider);*/
+   viewLayout->addWidget(vslider);
    viewLayout->addWidget(new QLabel("Scale"));
    viewLayout->addWidget(scaleslider);
    viewLayout->addWidget(label);

@@ -10,8 +10,9 @@
 #include <QGLShaderProgram>
 #include <iostream>
 #include <QMatrix4x4>
+#include <QGLFunctions>
 
-class TerrainView : public QGLWidget
+class TerrainView : public QGLWidget, protected QGLFunctions
 {
 Q_OBJECT
 //  Private data
@@ -27,7 +28,6 @@ private:
     float shinyvec[1];  //  Shininess (value)
     int th;             //  Azimuth of view angle
     int ph;             //  Elevation of view angle
-    int fov;            //  Field of view (for perspective)
     int light;          //  Lighting
     double asp;         //  Aspect ratio
     double dim;         //  Size of world
@@ -36,19 +36,30 @@ private:
     int shaders;        //  Shaders on/off
     float scale;        //  Size of terrain
 
+    // Terrain
     int terrainDL;
     int usingTexture;
     int usingMap;
 
-    //  Light position
+    //  Lighting
     float lightPos[4];
 
+    // Noise
     int turbulencePasses;
     double octaves;
     double persistence;
     double amplitude;
 
-    QMatrix4x4 projection;
+    // Camera
+    float fov;
+
+    // Shadows
+    int shadowdim;          // Dimensions of shadowmap
+    unsigned int framebuf;  // Frame buffer
+    double       Svec[4];   // Texture planes S
+    double       Tvec[4];   // Texture planes T
+    double       Rvec[4];   // Texture planes R
+    double       Qvec[4];   // Texture planes Q
 
 //  Public access to this widget
 public:
@@ -68,6 +79,10 @@ public slots:
     void toggleShaders();              //  Slot for toggling shaders
     void setScale(int new_scale);      //  Slot for changing terrain size
     void initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude);
+    void initializeShadowMap();        //  Set up calculation of shadow map
+    void calculateShadowMap();         //  Compute shadow map
+    void lightingEnabled(int enabled); //  Turn lighting on/off
+    void scene(int light);             //  Draw scene with lighting on or off
 signals:
     void message(QString text);    //  Signal for messages
     void multMessage(QString text);
