@@ -44,7 +44,6 @@ TerrainView::TerrainView(QWidget* parent)
 
    // camera
    dim = 6.0;
-   projection = QMatrix4x4();
 }
 
 void TerrainView::initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude)
@@ -232,8 +231,8 @@ void TerrainView::mouseMoveEvent(QMouseEvent* event)
    int deltaX = newX - lastX;
    int deltaY = newY - lastY;
 
-   theta += deltaX*.001;
-   phi += deltaY*.001;
+   theta += deltaX * 0.001;
+   phi   += deltaY * 0.001;
 
    //printf("delta x: %d\n", deltaX);
    //printf("delta y: %d\n\n", deltaY);
@@ -265,7 +264,7 @@ void TerrainView::paintGL()
 
    gluLookAt(eX,eY,eZ, // eye vector
              0, 0, 0,  // look at vector
-             0, 1, 0); // up vector
+             0, cos(phi), 0); // up vector
    
    glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,shinyvec);
    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
@@ -311,11 +310,11 @@ void TerrainView::paintGL()
       int loc = shader.uniformLocation("party");
       if (loc>=0)
       {
-        shader.setUniformValue(loc,party);
+        shader.setUniformValue(loc,1);
       }
       else
       {
-        printf("failed to share rando with shader!");
+        printf("failed to share uniform with shader!\n");
       }
 
       //  Undo transofrmations

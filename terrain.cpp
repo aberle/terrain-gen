@@ -16,7 +16,7 @@
 #include <time.h>
 #include "terrain.h"
 #include "simplexnoise.h"
-//#include "CSCIx229.h"
+#include <QtOpenGL>
 
 static int terrainGridWidth ,terrainGridLength;
 static float *terrainHeights = NULL;
@@ -273,6 +273,11 @@ int generateTerrain(int normals, int turbulencePasses, float octaves, float pers
 
 	terrainColors = NULL;
 
+	QImage *img = new QImage(512, 512, QImage::Format_RGB32);
+    QRgb value = qRgb(255,255,0);
+
+    float colorFactor;
+
 	// Fill height array with noise values
 	for (i = 0 ; i < terrainGridLength; i++)
 		for (j = 0;j < terrainGridWidth; j++) 
@@ -280,7 +285,22 @@ int generateTerrain(int normals, int turbulencePasses, float octaves, float pers
 			// Compute the height using 2d simplex noise
 			pointHeight = turbulence(i, j, turbulencePasses, octaves, persistence, amplitude);
 			terrainHeights[i*terrainGridWidth + j] = pointHeight;
+
+			colorFactor = (pointHeight+1.0)/2.0;
+			if (colorFactor > 1.0)
+				colorFactor = 1.0;
+			if (colorFactor < 0.0)
+				colorFactor = 0.0;
+
+			value = qRgb(255*colorFactor, 255*colorFactor, 255*colorFactor);
+			
+			if (colorFactor < 0.0 || colorFactor > 1.0)
+				printf("colorFactor: %f\n", colorFactor);
+
+			img->setPixel(i, j, value);
 		}
+
+	img->save("terrain.bmp");
 	
 	// If we want normals then compute them
 	if (normals)

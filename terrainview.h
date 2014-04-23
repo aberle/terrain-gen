@@ -9,7 +9,6 @@
 #include <QString>
 #include <QGLShaderProgram>
 #include <iostream>
-#include <QMatrix4x4>
 
 class TerrainView : public QGLWidget
 {
@@ -48,12 +47,10 @@ private:
     double persistence;
     double amplitude;
 
-    QMatrix4x4 projection;
-
 //  Public access to this widget
 public:
     TerrainView(QWidget* parent=0);                      //  Constructor
-    QSize sizeHint() const {return QSize(1920,1080);}   //  Default size of widget
+    QSize sizeHint() const {return QSize(800,800);}   //  Default size of widget
 
 //  Communications with other widgets
 public slots:
@@ -74,9 +71,9 @@ signals:
 
 //  Need to reimplement these methods inhereted from QGLWidget
 protected:
-    void initializeGL();                   //  Initialize widget
-    void resizeGL(int width, int height);  //  Resize widget
-    void paintGL();                        //  Draw widget
+    void initializeGL();                     // Initialize widget
+    void resizeGL(int width, int height);    // Resize widget
+    void paintGL();                          // Draw widget
     void mouseMoveEvent(QMouseEvent* event); // Capture mouse movement
 };
 

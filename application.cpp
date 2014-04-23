@@ -5,6 +5,8 @@
 #include <QtGui>
 #include "application.h"
 #include "terrainview.h"
+#include "drawNoise.h"
+#include "simplexnoise.h"
 
 //
 //  Constructor for Application widget
@@ -16,6 +18,12 @@ Application::Application()
 
    //  Create new terrainView widget
    TerrainView* terrainView = new TerrainView;
+   terrainView->setFixedSize(800,800);
+
+   // Create new drawNoise widget popup
+   DrawNoise* drawNoise = new DrawNoise;
+   drawNoise->setFixedSize(NOISE_HEIGHT,NOISE_WIDTH);
+   drawNoise->show();
 
    //  Create slider and set range to 0-360 (degrees)
    QSlider* hslider = new QSlider(Qt::Horizontal);
@@ -58,7 +66,7 @@ Application::Application()
 
    //  Create slider and set range to 10-200
    QSlider* scaleslider = new QSlider(Qt::Horizontal);
-   scaleslider->setRange(10,200);
+   scaleslider->setRange(1,200);
    //  Eye candy - set tick interval for display
    scaleslider->setTickInterval(5);
    scaleslider->setTickPosition(QSlider::TicksBelow);
