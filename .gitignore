@@ -29,3 +29,6 @@ Makefile*
 
 # Binary
 tGen
+
+# Noise images
+*.bmp
