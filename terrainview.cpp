@@ -15,15 +15,15 @@ TerrainView::TerrainView(QWidget* parent)
     : QGLWidget(parent)
 {
    //  Set intial display angle
-   theta = 0;
-   phi   = 0;
+   theta = 1.5;
+   phi   = 0.7;
 
    //  Initialize color/texture toggle
    texture = false;
 
    emission  =   0;  // Emission intensity (%)
-   ambient   =  30;  // Ambient intensity (%)
-   diffuse   = 100;  // Diffuse intensity (%)
+   ambient   =   5;  // Ambient intensity (%)
+   diffuse   =  80;  // Diffuse intensity (%)
    specular  =   0;  // Specular intensity (%)
    shininess =   0;  // Shininess (power of two)
    light     =   1;  // Lighting enabled
@@ -174,12 +174,23 @@ void TerrainView::resizeGL(int width, int height)
 void TerrainView::idle()
 {
    //  Elapsed time in seconds
-   double t = glutGet(GLUT_ELAPSED_TIME)/50000.0;
-   double az = fmod(90*t,1440.0);
+   double t = glutGet(GLUT_ELAPSED_TIME)/240000.0;
+   double az = fmod(90*t,2880.0);
 
    //  Set light position
-   lightPos[0] = 0.5*cos(az);
-   lightPos[2] = 0.5*sin(az);
+   lightPos[1] = 3*sin(az);
+   lightPos[2] = 3*cos(az);
+
+   if (lightPos[1] < 0.0)
+   {
+      diffuse   =  60;  // Diffuse intensity (%)
+   }
+   else
+   {
+      diffuse   =  80;  // Diffuse intensity (%)
+   }
+
+   
 
    updateGL();
 }
@@ -243,7 +254,7 @@ void TerrainView::mouseMoveEvent(QMouseEvent* event)
 void TerrainView::wheelEvent(QWheelEvent* event)
 {
    //printf("scroll delta: %d\n", event->delta());
-   zoom += (float)event->delta()/1000.0;
+   zoom += event->delta()/1000.0;
 }
 
 //
@@ -263,12 +274,13 @@ void TerrainView::paintGL()
    glLoadIdentity();
 
    //  Eye position
-   float eX = -1*dim*sin(theta)*cos(phi)*zoom;
-   float eY = +1*dim           *sin(phi)*zoom;
-   float eZ = +1*dim*cos(theta)*cos(phi)*zoom;
+   float eX = -1*dim*sin(theta)*cos(phi);//*zoom;
+   float eY = +1*dim           *sin(phi);//*zoom;
+   float eZ = +1*dim*cos(theta)*cos(phi);//*zoom;
 
-   gluLookAt(eX,eY,eZ, // eye vector
-             0, 0, 0,  // look at vector
+   // Point the camera
+   gluLookAt(eX,eY,eZ,        // eye position vector
+             0, 0, 0,         // look at vector
              0, cos(phi), 0); // up vector
    
    glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,shinyvec);
