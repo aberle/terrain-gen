@@ -9,7 +9,7 @@ make
 
 ### Controls
 * View
- * Click and drag mouse to change view orientation
+ * Click on the scene and drag mouse to change view orientation
  * Scroll mouse wheel up and down to change zoom level
 * Noise
  * First text entry field controls turbulence (smoothing) passes (range: 2-256)
