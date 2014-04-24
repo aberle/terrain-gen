@@ -23,7 +23,7 @@ Application::Application()
 
    // Create new drawNoise widget popup
    DrawNoise* drawNoise = new DrawNoise;
-   drawNoise->setFixedSize(NOISE_HEIGHT,NOISE_WIDTH);
+   drawNoise->setFixedSize(NOISE_HEIGHT-32,NOISE_WIDTH-32);
    drawNoise->setWindowTitle("Noise Texture");
    drawNoise->move(1100,0);
    drawNoise->show();
