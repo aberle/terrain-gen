@@ -185,6 +185,7 @@ void TerrainView::idle()
    if (3*sin(az) < 0.0)
    {
       moon = 1;
+      lightPos[2] = -3*cos(az);
    }
    else
    {
