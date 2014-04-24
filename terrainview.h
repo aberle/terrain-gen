@@ -47,6 +47,10 @@ private:
     double persistence;
     double amplitude;
 
+    // mouse movement
+    int lastX;
+    int lastY;
+
 //  Public access to this widget
 public:
     TerrainView(QWidget* parent=0);                      //  Constructor
@@ -71,10 +75,11 @@ signals:
 
 //  Need to reimplement these methods inhereted from QGLWidget
 protected:
-    void initializeGL();                     // Initialize widget
-    void resizeGL(int width, int height);    // Resize widget
-    void paintGL();                          // Draw widget
-    void mouseMoveEvent(QMouseEvent* event); // Capture mouse movement
+    void initializeGL();                       // Initialize widget
+    void resizeGL(int width, int height);      // Resize widget
+    void paintGL();                            // Draw widget
+    void mouseMoveEvent(QMouseEvent* event);   // Capture mouse click and movement
+    void mouseReleaseEvent(QMouseEvent* event);// Capture button release
 };
 
 #endif

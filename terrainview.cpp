@@ -44,6 +44,10 @@ TerrainView::TerrainView(QWidget* parent)
 
    // camera
    dim = 6.0;
+
+   // mouse
+   lastX = -999;
+   lastY = -999;
 }
 
 void TerrainView::initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude)
@@ -202,13 +206,22 @@ void TerrainView::setAmplitude(QString val)
    amplitude = value;
 }
 
+void TerrainView::mouseReleaseEvent(QMouseEvent* event)
+{
+   lastX = -999;
+   lastY = -999;
+}
+
 void TerrainView::mouseMoveEvent(QMouseEvent* event) 
 {
-   static int lastX = 0;
-   static int lastY = 0;
-
    int newX = event->pos().x();
    int newY = event->pos().y();
+   
+   if (lastX == -999 && lastY == -999)
+   {
+      lastX = newX;
+      lastY = newY;
+   }
 
    int deltaX = newX - lastX;
    int deltaY = newY - lastY;
