@@ -32,8 +32,8 @@ make
  * 3D noise parameters selectable by user
    + Moving clouds
  * ~~Light moves like the sun~~
-   + User controlled rate
-    + ~~Moonlight phase at "night"~~
+    + User controlled rate
+    + ~~Moonlight phase at "night"~~ 
  * Fix zooming controls for "god mode"
  * Add skybox
  * Add "human" view mode
