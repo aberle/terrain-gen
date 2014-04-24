@@ -178,8 +178,10 @@ void TerrainView::idle()
    double az = fmod(90*t,2880.0);
 
    //  Set light position
-   lightPos[1] = 3*sin(az);
+   lightPos[1] = fabs(3*sin(az));
    lightPos[2] = 3*cos(az);
+
+   //printf("lightPos[1]:%f\n", lightPos[1]);
 
    updateGL();
 }
