@@ -4,7 +4,6 @@
 #include <QtOpenGL>
 #include <GL/glut.h>
 #include "drawNoise.h"
-#include "terrain.h"
 
 extern float* terrainHeights;
 
@@ -15,15 +14,7 @@ DrawNoise::DrawNoise(QWidget* parent)
     : QGLWidget(parent)
 {
    
-   /*for (int i = 0; i < NOISE_WIDTH; ++i)
-   {
-      for (int j = 0; j < NOISE_HEIGHT; ++j)
-      {
-         noiseData[i*NOISE_WIDTH + j] = (float)i;
-         
-      }
-   }*/
-
+   // Nothing
 }
 
 //
@@ -31,15 +22,12 @@ DrawNoise::DrawNoise(QWidget* parent)
 //
 void DrawNoise::initializeGL()
 {
-   if (!shader.addShaderFromSourceFile(QGLShader::Fragment,"drawNoise.frag"))
-      exit(-1);
-   if (!shader.link())
-      exit(-1);
+   // Nothing
 }
 
 void DrawNoise::resizeGL(int width, int height)
 {
-   //nothing
+   // Nothing, window is fixed size
 }
 
 void DrawNoise::paintGL()
@@ -47,23 +35,34 @@ void DrawNoise::paintGL()
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glLoadIdentity();
 
-   glColor3f(1.0, 0.0, 0.0);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   glOrtho(0, NOISE_HEIGHT, 0, NOISE_WIDTH, 0, 1);
 
-   shader.bind();
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
 
-   shader.setUniformValueArray("noise",noiseData,NOISE_WIDTH,1);
+   glEnable(GL_TEXTURE_2D);
 
-   glBegin(GL_QUADS);                      // Draw A Quad
-     glVertex3f(-1.0f, 1.0f, 0.0f);              // Top Left
-     glVertex3f( 1.0f, 1.0f, 0.0f);              // Top Right
-     glVertex3f( 1.0f,-1.0f, 0.0f);              // Bottom Right
-     glVertex3f(-1.0f,-1.0f, 0.0f);              // Bottom Left
+   //  Load terrain noise image
+   QPixmap img("terrain.bmp");
+   int tex = bindTexture(img,GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, tex);
+
+   glColor3f(1, 1, 1);
+   glBegin(GL_QUADS); 
+
+   glTexCoord2f(1,1); glVertex3f(NOISE_WIDTH, NOISE_HEIGHT, 0.0f); 
+   glTexCoord2f(1,0); glVertex3f(NOISE_WIDTH, 0.0f,         0.0f); 
+   glTexCoord2f(0,0); glVertex3f(0.0f,        0.0f,         0.0f); 
+   glTexCoord2f(0,1); glVertex3f(0.0f,        NOISE_HEIGHT, 0.0f); 
+   
    glEnd();
+   glDisable(GL_TEXTURE_2D);
 
-   shader.release();
 }
 
-void DrawNoise::reDraw(float* values)
+void DrawNoise::reDraw()
 {
-   //nothing
+   updateGL();
 }

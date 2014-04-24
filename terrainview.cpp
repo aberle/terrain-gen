@@ -150,24 +150,6 @@ void TerrainView::resizeGL(int width, int height)
    //  Viewport is whole screen
    glViewport(0,0,width,height);
 
-   /*
-   //  Orthogonal projection to 2
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-   glOrtho(-2*asp, +2*asp, -2, +2, -2, +2);
-
-   //  Back to model view
-   glMatrixMode(GL_MODELVIEW);
-
-   // Set near plane to 4.0, far plane to 4.0, field of view 60 degrees
-   const qreal zNear = 4.0, zFar = 4.0, fov = 60.0;
-
-   // Reset projection
-   projection.setToIdentity();
-
-   // Set perspective projection
-   projection.perspective(fov, asp, zNear, zFar);*/
-
    //  Tell OpenGL we want to manipulate the projection matrix
    glMatrixMode(GL_PROJECTION);
    //  Undo previous transformations

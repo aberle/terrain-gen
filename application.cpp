@@ -13,8 +13,9 @@
 //
 Application::Application()
 {
-   //  Set window title
+   //  Set window title and location
    setWindowTitle(tr("Nicholas Aberle: Simplex Noise Terrain Generation"));
+   move(0,0);
 
    //  Create new terrainView widget
    TerrainView* terrainView = new TerrainView;
@@ -23,6 +24,8 @@ Application::Application()
    // Create new drawNoise widget popup
    DrawNoise* drawNoise = new DrawNoise;
    drawNoise->setFixedSize(NOISE_HEIGHT,NOISE_WIDTH);
+   drawNoise->setWindowTitle("Noise Texture");
+   drawNoise->move(1100,0);
    drawNoise->show();
 
    //  Create slider and set range to 0-360 (degrees)
@@ -136,7 +139,8 @@ Application::Application()
    //  Connect textChanged signal of lineEdit to plug into setAmplitude function
    connect(amp, SIGNAL(textChanged(QString)), terrainView , SLOT(setAmplitude(QString)));
    
-   //  Connect clicked() signal of push button to toggle lights
+   //  Connect clicked() signal of push button to regenerate terrain (and redraw noise image)
    connect(button, SIGNAL(clicked()) , terrainView , SLOT(reGenTerrain()));
+   connect(button, SIGNAL(clicked()) , drawNoise   , SLOT(reDraw()));
    
 }
