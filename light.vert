@@ -2,7 +2,7 @@
 varying float LightIntensity;
 varying vec3  ModelPos;
 
-//  Phong lighting intensity only
+//  Phong lighting intensity
 float phong()
 {
    //  P is the vertex coordinate on body
@@ -29,7 +29,7 @@ float phong()
            + Is*gl_FrontLightProduct[0].specular.rgb;
 
    //  Vertex intensity
-   return length(color);
+   return length(color) * (gl_LightSource[0].position.y * 0.75);
 }
 
 void main()

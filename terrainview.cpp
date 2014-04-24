@@ -181,17 +181,6 @@ void TerrainView::idle()
    lightPos[1] = 3*sin(az);
    lightPos[2] = 3*cos(az);
 
-   if (lightPos[1] < 0.0)
-   {
-      diffuse   =  60;  // Diffuse intensity (%)
-   }
-   else
-   {
-      diffuse   =  80;  // Diffuse intensity (%)
-   }
-
-   
-
    updateGL();
 }
 
@@ -283,9 +272,9 @@ void TerrainView::paintGL()
              0, 0, 0,         // look at vector
              0, cos(phi), 0); // up vector
    
-   glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,shinyvec);
-   glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
-   glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+   glMaterialfv(GL_FRONT,GL_SHININESS,shinyvec);
+   glMaterialfv(GL_FRONT,GL_SPECULAR,white);
+   glMaterialfv(GL_FRONT,GL_EMISSION,black);
    //  Save transformation
    glPushMatrix();
    //  Offset, scale and rotate
@@ -306,7 +295,7 @@ void TerrainView::paintGL()
       //  Location of viewer for specular calculations
       glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,1); // or 0
       //  glColor sets ambient and diffuse color materials
-      glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
+      glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
       glEnable(GL_COLOR_MATERIAL);
       //  Enable light 0
       glEnable(GL_LIGHT0);
