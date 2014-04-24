@@ -13,13 +13,14 @@ void main()
    //  Divide by checker size for unit coordinates
    vec3 position = ModelPos / CheckSize;
 
-   vec3 color = vec3(1.0, 1.0, 0.0);
+   vec3 color = vec3(1.0, 0.0, 0.0);
 
    vec3 green = vec3(0.0, 1.0, 0.0);
    vec3 yellow = vec3(1.0, 1.0, 0.0);
 
    if (party == 1)
    {
+        color.y = 1.0;
    	  green.x = 1.0;
    	  green.y = 0.0;
    	  yellow.x = 0.0;
@@ -27,7 +28,7 @@ void main()
    	  yellow.z = 1.0;
    }
 
-   
+   /*
    if ((position.x > .05 && position.y > 0.05) || (position.x < .05 && position.y < 0.05))
    {
       if (position.z < 0.5)
@@ -49,6 +50,11 @@ void main()
       {
          color = green;
       }
+   }*/
+
+   if (position.y > 300.0)
+   {
+      color = green;
    }
 
    color *= LightIntensity;
