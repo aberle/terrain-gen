@@ -175,7 +175,7 @@ void TerrainView::resizeGL(int width, int height)
 void TerrainView::idle()
 {
    //  Elapsed time in seconds
-   double t = glutGet(GLUT_ELAPSED_TIME)/240000.0;
+   double t = glutGet(GLUT_ELAPSED_TIME)/480000.0;
    double az = fmod(90*t,2880.0);
 
    //  Set light position

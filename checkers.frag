@@ -1,8 +1,5 @@
 //  Checkers fragment shader
 
-//  Hardwire checker size
-const vec3 CheckSize   = vec3(0.30,0.15, 0.0);
-
 //  Model coordinates and light from vertex shader
 varying float LightIntensity;
 varying vec3  ModelPos;
@@ -11,7 +8,7 @@ uniform int moon;
 void main()
 {
    //  Divide by checker size for unit coordinates
-   vec3 position = ModelPos / CheckSize;
+   vec3 position = ModelPos;
 
    vec3 green = vec3(0.0, 1.0, 0.0);
    vec3 yellow = vec3(1.0, 1.0, 0.0);
@@ -19,7 +16,7 @@ void main()
 
    vec3 color = yellow;
 
-   if (position.y > 300.0)
+   if (position.y > 50.0)
    {
       color = red;
    }
