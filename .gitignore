@@ -30,5 +30,5 @@ Makefile*
 # Binary
 tGen
 
-# Noise images
-*.bmp
+# Noise image
+terrain.bmp

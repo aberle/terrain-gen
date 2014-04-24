@@ -53,6 +53,10 @@ private:
     int lastY;
     float zoom;
 
+    // skybox
+    int sky0;
+    int sky1;
+
 //  Public access to this widget
 public:
     TerrainView(QWidget* parent=0);                      //  Constructor
@@ -71,6 +75,7 @@ public slots:
     void toggleShaders();              //  Slot for toggling shaders
     void setScale(int new_scale);      //  Slot for changing terrain size
     void initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude);
+    void skyBox(double D);             //  Draw skybox
 signals:
     void message(QString text);    //  Signal for messages
     void multMessage(QString text);
