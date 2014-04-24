@@ -6,58 +6,33 @@ const vec3 CheckSize   = vec3(0.30,0.15, 0.0);
 //  Model coordinates and light from vertex shader
 varying float LightIntensity;
 varying vec3  ModelPos;
-uniform int party;
+uniform int moon;
 
 void main()
 {
    //  Divide by checker size for unit coordinates
    vec3 position = ModelPos / CheckSize;
 
-   vec3 color = vec3(1.0, 0.0, 0.0);
-
    vec3 green = vec3(0.0, 1.0, 0.0);
    vec3 yellow = vec3(1.0, 1.0, 0.0);
+   vec3 red = vec3(1.0, 0.0, 0.0);
 
-   if (party == 1)
-   {
-        color.y = 1.0;
-   	  green.x = 1.0;
-   	  green.y = 0.0;
-   	  yellow.x = 0.0;
-   	  yellow.y = 0.0;
-   	  yellow.z = 1.0;
-   }
-
-   /*
-   if ((position.x > .05 && position.y > 0.05) || (position.x < .05 && position.y < 0.05))
-   {
-      if (position.z < 0.5)
-      {
-         color = green;
-      }
-      else
-      {
-         color = yellow;
-      }
-   }
-   else
-   {
-      if (position.z < 0.5)
-      {
-         color = yellow;
-      }
-      else
-      {
-         color = green;
-      }
-   }*/
+   vec3 color = yellow;
 
    if (position.y > 300.0)
    {
-      color = green;
+      color = red;
    }
 
-   color *= LightIntensity;
+   float multiplier = 1.0;
+
+   if (moon == 1)
+   {
+      color.z += .25;
+      multiplier = 0.5;
+   }
+
+   color *= LightIntensity * multiplier;
    //  Pad color with alpha
    gl_FragColor = vec4(color,1.0);
 }

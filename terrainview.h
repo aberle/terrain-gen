@@ -41,6 +41,7 @@ private:
 
     //  Light position
     float lightPos[4];
+    int moon;
 
     int turbulencePasses;
     double octaves;

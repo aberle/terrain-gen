@@ -1,6 +1,7 @@
 //  Light intensity and model position required by fragment shader
 varying float LightIntensity;
 varying vec3  ModelPos;
+uniform float lightFactor;
 
 //  Phong lighting intensity
 float phong()
@@ -29,7 +30,7 @@ float phong()
            + Is*gl_FrontLightProduct[0].specular.rgb;
 
    //  Vertex intensity
-   return length(color) * (gl_LightSource[0].position.y * 0.5);
+   return length(color) * (lightFactor * 0.5);
 }
 
 void main()

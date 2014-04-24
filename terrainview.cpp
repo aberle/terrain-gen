@@ -31,6 +31,7 @@ TerrainView::TerrainView(QWidget* parent)
    lightPos[1] = 0.75;
    lightPos[2] = 0.0;
    lightPos[3] = 1.0;
+   moon = 0;
    
    shaders   =   1;  // Shaders on/off
    scale = 0.2;
@@ -181,6 +182,15 @@ void TerrainView::idle()
    lightPos[1] = fabs(3*sin(az));
    lightPos[2] = 3*cos(az);
 
+   if (3*sin(az) < 0.0)
+   {
+      moon = 1;
+   }
+   else
+   {
+      moon = 0;
+   }
+
    //printf("lightPos[1]:%f\n", lightPos[1]);
 
    updateGL();
@@ -315,15 +325,26 @@ void TerrainView::paintGL()
    if (shaders)
    {
       shader.bind();
-      int loc = shader.uniformLocation("party");
-      if (loc>=0)
+      int loc = shader.uniformLocation("moon");
+      if (loc >= 0)
       {
-        shader.setUniformValue(loc,1);
+        shader.setUniformValue(loc,moon);
       }
       else
       {
-        printf("failed to share uniform with shader!\n");
+        printf("failed to share moon with shader!\n");
       }
+
+      loc = shader.uniformLocation("lightFactor");
+      if (loc >= 0)
+      {
+         shader.setUniformValue(loc, lightPos[1]);
+      }
+      else
+      {
+        printf("failed to share lightFactor with shader!\n");
+      }
+
 
       //  Undo transofrmations
       glPopMatrix();
