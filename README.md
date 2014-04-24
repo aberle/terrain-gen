@@ -31,7 +31,7 @@ make
  * Particle clouds using 3D noise sampled by shader
  * 3D noise parameters selectable by user
    + Moving clouds
- * Light moves like the sun
+ * ~~Light moves like the sun~~
    + User controlled rate
     + Moonlight phase at "night"
  * Fix zooming controls for "god mode"
