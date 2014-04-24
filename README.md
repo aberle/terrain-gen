@@ -33,7 +33,7 @@ make
    + Moving clouds
  * ~~Light moves like the sun~~
    + User controlled rate
-    + Moonlight phase at "night"
+    + ~~Moonlight phase at "night"~~
  * Fix zooming controls for "god mode"
  * Add "human" view mode with skybox
    + Lens flare when looking at sun
