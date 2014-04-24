@@ -35,6 +35,7 @@ make
    + User controlled rate
     + ~~Moonlight phase at "night"~~
  * Fix zooming controls for "god mode"
- * Add "human" view mode with skybox
+ * Add skybox
+ * Add "human" view mode
    + Lens flare when looking at sun
  * Shadows (lol)
