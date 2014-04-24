@@ -48,6 +48,7 @@ TerrainView::TerrainView(QWidget* parent)
    // mouse
    lastX = -999;
    lastY = -999;
+   zoom = 0.0;
 }
 
 void TerrainView::initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude)
@@ -183,18 +184,19 @@ void TerrainView::idle()
    updateGL();
 }
 
+//
+// Slots to set noise params
+//
 void TerrainView::setTurbulence(QString val)
 {
    int value = val.toInt();
    turbulencePasses = value;
 }
-
 void TerrainView::setOctaves(QString val)
 {
    double value = val.toDouble();
    octaves = value;
 }
-
 void TerrainView::setPersistence(QString val)
 {
    double value = val.toDouble();
@@ -206,34 +208,42 @@ void TerrainView::setAmplitude(QString val)
    amplitude = value;
 }
 
+// 
+// Mouse stuff
+//
 void TerrainView::mouseReleaseEvent(QMouseEvent* event)
 {
+   // Special flag to indicate that the last coordinates should be forgotten
    lastX = -999;
    lastY = -999;
 }
-
 void TerrainView::mouseMoveEvent(QMouseEvent* event) 
 {
+   // Find where the cursor is
    int newX = event->pos().x();
    int newY = event->pos().y();
    
+   // The mouse has just been clicked, start from scratch
    if (lastX == -999 && lastY == -999)
    {
       lastX = newX;
       lastY = newY;
    }
 
+   // Move the camera based on how far the mouse has moved
    int deltaX = newX - lastX;
    int deltaY = newY - lastY;
-
    theta += deltaX * 0.001;
    phi   += deltaY * 0.001;
 
-   //printf("delta x: %d\n", deltaX);
-   //printf("delta y: %d\n\n", deltaY);
-
+   // Store the new coordinates
    lastX = newX;
    lastY = newY;
+}
+void TerrainView::wheelEvent(QWheelEvent* event)
+{
+   //printf("scroll delta: %d\n", event->delta());
+   zoom += (float)event->delta()/1000.0;
 }
 
 //
@@ -253,9 +263,9 @@ void TerrainView::paintGL()
    glLoadIdentity();
 
    //  Eye position
-   float eX = -1*dim*sin(theta)*cos(phi);
-   float eY = +1*dim           *sin(phi);
-   float eZ = +1*dim*cos(theta)*cos(phi);
+   float eX = -1*dim*sin(theta)*cos(phi)*zoom;
+   float eY = +1*dim           *sin(phi)*zoom;
+   float eZ = +1*dim*cos(theta)*cos(phi)*zoom;
 
    gluLookAt(eX,eY,eZ, // eye vector
              0, 0, 0,  // look at vector

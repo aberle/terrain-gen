@@ -50,6 +50,7 @@ private:
     // mouse movement
     int lastX;
     int lastY;
+    float zoom;
 
 //  Public access to this widget
 public:
@@ -80,6 +81,7 @@ protected:
     void paintGL();                            // Draw widget
     void mouseMoveEvent(QMouseEvent* event);   // Capture mouse click and movement
     void mouseReleaseEvent(QMouseEvent* event);// Capture button release
+    void wheelEvent(QWheelEvent* event);       // Capture scroll wheel movements
 };
 
 #endif

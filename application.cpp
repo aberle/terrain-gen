@@ -94,7 +94,7 @@ Application::Application()
    // Container for noise controls
    QGroupBox* noiseControls = new QGroupBox("Noise Controls");
    QVBoxLayout* noiseLayout = new QVBoxLayout;
-   noiseLayout->addWidget(new QLabel("Turbulence Passes (2-256)"));
+   noiseLayout->addWidget(new QLabel("Smoothing Passes (2-256)"));
    noiseLayout->addWidget(turb);
    noiseLayout->addWidget(new QLabel("Octaves (1.0-64.0)"));
    noiseLayout->addWidget(oct);
