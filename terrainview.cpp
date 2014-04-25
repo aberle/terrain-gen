@@ -14,11 +14,11 @@ extern float *terrainHeights;
 TerrainView::TerrainView(QWidget* parent)
     : QGLWidget(parent)
 {
-   //  Set intial display angle
-   theta = 1.5;
-   phi   = 0.7;
+   // Set intial display angle
+   theta = -1.5;
+   phi   =  0.7;
 
-   //  Initialize color/texture toggle
+   // Initialize color/texture toggle
    texture = false;
 
    emission  =   0;  // Emission intensity (%)
@@ -148,8 +148,10 @@ void TerrainView::initializeGL()
    sky1 = bindTexture(img1,GL_TEXTURE_2D);
 
    // Load terrain textures
-   QPixmap img2("rock-512.jpg");
+   QPixmap img2("rock.jpg");
    rock_texture = bindTexture(img2,GL_TEXTURE_2D);
+   QPixmap img3("grass.jpg");
+   grass_texture = bindTexture(img3,GL_TEXTURE_2D);
 }
 
 //
@@ -185,7 +187,7 @@ void TerrainView::resizeGL(int width, int height)
 void TerrainView::idle()
 {
    //  Elapsed time in seconds
-   double t = glutGet(GLUT_ELAPSED_TIME)/480000.0;
+   double t = glutGet(GLUT_ELAPSED_TIME)/1480000.0;
    double az = fmod(90*t,2880.0);
 
    //  Set light position
@@ -413,7 +415,24 @@ void TerrainView::paintGL()
       {
          shader.setUniformValue(loc, 0);
          glActiveTexture(GL_TEXTURE0);
+         glEnable(GL_TEXTURE_2D);
          glBindTexture(GL_TEXTURE_2D, rock_texture);
+         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      }
+      else
+      {
+         printf("failed to share rock_texture with shader!\n");
+      }
+      loc = shader.uniformLocation("grass_texture");
+      if (loc >= 0)
+      {
+         shader.setUniformValue(loc, 1);
+         glActiveTexture(GL_TEXTURE1);
+         glEnable(GL_TEXTURE_2D);
+         glBindTexture(GL_TEXTURE_2D, grass_texture);
+         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
       }
       else
       {

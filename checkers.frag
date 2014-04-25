@@ -3,22 +3,21 @@
 //  Model coordinates and light from vertex shader
 varying float LightIntensity;
 varying vec3  ModelPos;
+varying vec2 texture_coordinate0;
 uniform int moon;
+uniform sampler2D rock_texture;
+uniform sampler2D grass_texture;
 
 void main()
 {
    //  Divide by checker size for unit coordinates
    vec3 position = ModelPos;
 
-   vec3 green = vec3(0.0, 1.0, 0.0);
-   vec3 yellow = vec3(1.0, 1.0, 0.0);
-   vec3 red = vec3(1.0, 0.0, 0.0);
-
-   vec3 color = yellow;
-
+   vec3 color = texture2D(grass_texture, texture_coordinate0.st).rgb;
+   
    if (position.y > 50.0)
    {
-      color = red;
+      color = texture2D(rock_texture, texture_coordinate0.st).rgb;
    }
 
    float multiplier = 1.0;

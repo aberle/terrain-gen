@@ -59,6 +59,7 @@ private:
 
     // terrain textures
     int rock_texture;
+    int grass_texture;
 
 //  Public access to this widget
 public:

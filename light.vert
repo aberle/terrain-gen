@@ -2,6 +2,7 @@
 varying float LightIntensity;
 varying vec3  ModelPos;
 uniform float lightFactor;
+varying vec2 texture_coordinate0;
 
 //  Phong lighting intensity
 float phong()
@@ -35,6 +36,9 @@ float phong()
 
 void main()
 {
+   // Pass the texture coordinates of texture unit to the fragment shader
+   texture_coordinate0 = vec2(gl_MultiTexCoord0);
+   
    //  Scalar light intensity (for fragment shader)
    LightIntensity = phong();
    //  Save model coordinates (for fragment shader)
