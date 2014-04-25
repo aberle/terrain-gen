@@ -66,18 +66,18 @@ void TerrainView::initTerrain(int turbulencePasses, float octaves, float persist
 
 
 //
-//  Set scale (TerrainView size)
+// Set scale (TerrainView size)
 //
 void TerrainView::setScale(int new_scale)
 {
-   //  Set scale
+   // Set scale
    scale = float(float(new_scale)/200);
-   //  Request redisplay
+   // Request redisplay
    updateGL();
 }
 
 //
-//  Set theta (horizontal rotation angle)
+// Set theta (horizontal rotation angle)
 //
 void TerrainView::setTheta(int angle)
 {
@@ -88,7 +88,7 @@ void TerrainView::setTheta(int angle)
 }
 
 //
-//  Set phi (vertical rotation angle)
+// Set phi (vertical rotation angle)
 //
 void TerrainView::setPhi(int angle)
 {
@@ -99,7 +99,7 @@ void TerrainView::setPhi(int angle)
 }
 
 //
-//  Turn lights on/off
+// Turn lights on/off
 //
 void TerrainView::reGenTerrain()
 {
@@ -108,7 +108,7 @@ void TerrainView::reGenTerrain()
 }
 
 //
-//  Turn shaders on/off
+// Turn shaders on/off
 //
 void TerrainView::toggleShaders()
 {
@@ -118,7 +118,7 @@ void TerrainView::toggleShaders()
 }
 
 //
-//  Initialize
+// Initialize
 //
 void TerrainView::initializeGL()
 {
@@ -126,14 +126,14 @@ void TerrainView::initializeGL()
    char* argv[2] = {(char*)"tGen", NULL};
    glutInit(&argc, argv);
 
-   //  Enable Z-buffer depth testing
+   // Enable Z-buffer depth testing
    glEnable(GL_DEPTH_TEST);
    glDepthFunc(GL_LEQUAL);
    glPolygonOffset(4,0);
 
    initTerrain(turbulencePasses, 1.0, 1.0, 1.0);
 
-   //  Build shader
+   // Build shader
    if (!shader.addShaderFromSourceFile(QGLShader::Vertex,"light.vert"))
       exit(-1);
    if (!shader.addShaderFromSourceFile(QGLShader::Fragment,"checkers.frag"))
@@ -141,11 +141,15 @@ void TerrainView::initializeGL()
    if (!shader.link())
       exit(-1);
 
-   //  Load skybox images
+   // Load skybox images
    QPixmap img0("sky0.bmp");
    sky0 = bindTexture(img0,GL_TEXTURE_2D);
    QPixmap img1("sky1.bmp");
    sky1 = bindTexture(img1,GL_TEXTURE_2D);
+
+   // Load terrain textures
+   QPixmap img2("rock-512.jpg");
+   rock_texture = bindTexture(img2,GL_TEXTURE_2D);
 }
 
 //
@@ -387,7 +391,7 @@ void TerrainView::paintGL()
       int loc = shader.uniformLocation("moon");
       if (loc >= 0)
       {
-        shader.setUniformValue(loc,moon);
+        shader.setUniformValue(loc, moon);
       }
       else
       {
@@ -404,6 +408,17 @@ void TerrainView::paintGL()
         printf("failed to share lightFactor with shader!\n");
       }
 
+      loc = shader.uniformLocation("rock_texture");
+      if (loc >= 0)
+      {
+         shader.setUniformValue(loc, 0);
+         glActiveTexture(GL_TEXTURE0);
+         glBindTexture(GL_TEXTURE_2D, rock_texture);
+      }
+      else
+      {
+         printf("failed to share rock_texture with shader!\n");
+      }
 
       //  Undo transofrmations
       glPopMatrix();

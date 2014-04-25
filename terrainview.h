@@ -57,6 +57,9 @@ private:
     int sky0;
     int sky1;
 
+    // terrain textures
+    int rock_texture;
+
 //  Public access to this widget
 public:
     TerrainView(QWidget* parent=0);                      //  Constructor
