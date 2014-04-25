@@ -20,8 +20,8 @@ void main()
       color = texture2D(rock_texture, texture_coordinate0.st).rgb;
    }
 
-   vec3 grass = (smoothstep(28.0, 32.0, position.y) - smoothstep(35.0, 40.0, position.y)) * texture2D(grass_texture, texture_coordinate0.st).rgb;
-   vec3 rock  = (smoothstep(30.0, 50.0, position.y) - smoothstep(40.0, 70.0, position.y)) * texture2D(rock_texture, texture_coordinate0.st).rgb;
+   vec3 grass = (smoothstep(1.0,  50.0, position.y) - smoothstep(35.0, 65.0, position.y)) * texture2D(grass_texture, texture_coordinate0.st).rgb;
+   vec3 rock  = (smoothstep(30.0, 50.0, position.y) - smoothstep(50.0, 150.0, position.y)) * texture2D(rock_texture, texture_coordinate0.st).rgb;
    color = vec3(0.0, 0.0, 0.0) + grass + rock;
 
    float multiplier = 1.0;
