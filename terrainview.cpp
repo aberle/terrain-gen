@@ -286,6 +286,7 @@ void TerrainView::wheelEvent(QWheelEvent* event)
 //
 void TerrainView::skyBox(double D)
 {
+   glActiveTexture(GL_TEXTURE15);
    glColor3f(1,1,1);
    glEnable(GL_TEXTURE_2D);
 
@@ -425,6 +426,7 @@ void TerrainView::paintGL()
       glBindTexture(GL_TEXTURE_2D, rock_texture);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      glDisable(GL_TEXTURE_2D);
    }
    else
    {
@@ -439,6 +441,7 @@ void TerrainView::paintGL()
       glBindTexture(GL_TEXTURE_2D, grass_texture);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      glDisable(GL_TEXTURE_2D);
    }
    else
    {
@@ -461,6 +464,25 @@ void TerrainView::paintGL()
    glPopMatrix();
 
    shader.release();
+
+   // Water -- fix lighting
+   float waterSpecular[] = {0.01*70*(lightPos[1]*0.5),0.01*70*(lightPos[1]*0.5),0.01*70*(lightPos[1]*0.5),1.0};
+   float waterDiffuse[] = {0.01*5*(lightPos[1]*0.5),0.01*5*(lightPos[1]*0.5),0.01*5*(lightPos[1]*0.5),1.0};
+   float waterAmbient[] = {0.0, 0.0, 0.0, 1.0};
+
+   glLightfv(GL_LIGHT0, GL_SPECULAR, waterSpecular);
+   glLightfv(GL_LIGHT0, GL_DIFFUSE, waterDiffuse);
+   glLightfv(GL_LIGHT0, GL_AMBIENT, waterAmbient);
+      
+   glPushMatrix();
+   glVertex3f(0.0, 0.25, 0.80);
+   glBegin(GL_QUADS);
+      glVertex3f(-2.5,0.35,-2.5);
+      glVertex3f(+2.5,0.35,-2.5);
+      glVertex3f(+2.5,0.35,+2.5);
+      glVertex3f(-2.5,0.35,+2.5);
+   glEnd();
+   glPopMatrix();
 
    // Skybox
    skyBox(dim);
