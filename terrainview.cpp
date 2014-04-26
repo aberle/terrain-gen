@@ -33,7 +33,6 @@ TerrainView::TerrainView(QWidget* parent)
    lightPos[3] = 1.0;
    moon = 0;
    
-   shaders   =   1;  // Shaders on/off
    scale = 0.2;
    usingTexture = 0;
 
@@ -45,11 +44,12 @@ TerrainView::TerrainView(QWidget* parent)
 
    // camera
    dim = 6.0;
+   fov = 60.0; // field of view
 
    // mouse
    lastX = -999;
    lastY = -999;
-   zoom = 0.0;
+   zoom = 1.0;
 }
 
 void TerrainView::initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude)
@@ -108,16 +108,6 @@ void TerrainView::reGenTerrain()
 }
 
 //
-// Turn shaders on/off
-//
-void TerrainView::toggleShaders()
-{
-   shaders = 1-shaders;
-   //  Request redisplay
-   updateGL();
-}
-
-//
 // Initialize
 //
 void TerrainView::initializeGL()
@@ -152,6 +142,29 @@ void TerrainView::initializeGL()
    rock_texture = bindTexture(img2,GL_TEXTURE_2D);
    QPixmap img3("grass.jpg");
    grass_texture = bindTexture(img3,GL_TEXTURE_2D);
+
+   setCamera();
+}
+
+//
+// Camera settings
+// 
+void TerrainView::setCamera()
+{
+   // Tell OpenGL we want to manipulate the projection matrix
+   glMatrixMode(GL_PROJECTION);
+   // Undo previous transformations
+   glLoadIdentity();
+   // Perspective transformation
+   if (fov)
+      gluPerspective(fov,asp,dim/16,16*dim);
+   // Orthogonal transformation
+   else
+      glOrtho(-asp*dim,asp*dim,-dim,+dim,-dim,+dim);
+   // Switch to manipulating the model matrix
+   glMatrixMode(GL_MODELVIEW);
+   // Undo previous transformations
+   glLoadIdentity();
 }
 
 //
@@ -159,29 +172,14 @@ void TerrainView::initializeGL()
 //
 void TerrainView::resizeGL(int width, int height)
 {
-   //  Window aspect ratio
-   float asp= height ? width / (float)height : 1;
-
-   // Field of view
-   float fov = 60.0;
-
-   //  Viewport is whole screen
+   // Window aspect ratio
+   asp = height ? width / (float)height : 1; 
+   
+   // Viewport is whole screen
    glViewport(0,0,width,height);
 
-   //  Tell OpenGL we want to manipulate the projection matrix
-   glMatrixMode(GL_PROJECTION);
-   //  Undo previous transformations
-   glLoadIdentity();
-   //  Perspective transformation
-   if (fov)
-      gluPerspective(fov,asp,dim/16,16*dim);
-   //  Orthogonal transformation
-   else
-      glOrtho(-asp*dim,asp*dim,-dim,+dim,-dim,+dim);
-   //  Switch to manipulating the model matrix
-   glMatrixMode(GL_MODELVIEW);
-   //  Undo previous transformations
-   glLoadIdentity();
+   // Perspective camera
+   setCamera();
 }
 
 void TerrainView::idle()
@@ -267,8 +265,20 @@ void TerrainView::mouseMoveEvent(QMouseEvent* event)
 }
 void TerrainView::wheelEvent(QWheelEvent* event)
 {
-   //printf("scroll delta: %d\n", event->delta());
-   zoom += event->delta()/1000.0;
+   zoom  = (float)event->delta()/100.0;
+   fov  -= zoom;
+   
+   if (fov > 180.0)
+   {
+      fov = 180.0;
+   }
+   if (fov < 0.0)
+   {
+      fov = 0.0;
+   }
+
+   setCamera();
+   updateGL();
 }
 
 // 
@@ -340,9 +350,9 @@ void TerrainView::paintGL()
    glLoadIdentity();
 
    //  Eye position
-   float eX = -1*dim*sin(theta)*cos(phi);//*zoom;
-   float eY = +1*dim           *sin(phi);//*zoom;
-   float eZ = +1*dim*cos(theta)*cos(phi);//*zoom;
+   float eX = -1*dim*sin(theta)*cos(phi);// - sin(zoom);
+   float eY = +1*dim           *sin(phi);// - zoom;
+   float eZ = +1*dim*cos(theta)*cos(phi);// + sin(zoom);
 
    // Point the camera
    gluLookAt(eX,eY,eZ,        // eye position vector
@@ -385,81 +395,77 @@ void TerrainView::paintGL()
    else
      glDisable(GL_LIGHTING);
 
-   shaders = 1;
-
-   if (shaders)
+   shader.bind();
+   int loc = shader.uniformLocation("moon");
+   if (loc >= 0)
    {
-      shader.bind();
-      int loc = shader.uniformLocation("moon");
-      if (loc >= 0)
-      {
-        shader.setUniformValue(loc, moon);
-      }
-      else
-      {
-        printf("failed to share moon with shader!\n");
-      }
-
-      loc = shader.uniformLocation("lightFactor");
-      if (loc >= 0)
-      {
-         shader.setUniformValue(loc, lightPos[1]);
-      }
-      else
-      {
-        printf("failed to share lightFactor with shader!\n");
-      }
-
-      loc = shader.uniformLocation("rock_texture");
-      if (loc >= 0)
-      {
-         shader.setUniformValue(loc, 0);
-         glActiveTexture(GL_TEXTURE0);
-         glEnable(GL_TEXTURE_2D);
-         glBindTexture(GL_TEXTURE_2D, rock_texture);
-         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      }
-      else
-      {
-         printf("failed to share rock_texture with shader!\n");
-      }
-      loc = shader.uniformLocation("grass_texture");
-      if (loc >= 0)
-      {
-         shader.setUniformValue(loc, 1);
-         glActiveTexture(GL_TEXTURE1);
-         glEnable(GL_TEXTURE_2D);
-         glBindTexture(GL_TEXTURE_2D, grass_texture);
-         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      }
-      else
-      {
-         printf("failed to share rock_texture with shader!\n");
-      }
-
-      //  Undo transofrmations
-      glPopMatrix();
-
-      // Draw the terrain
-      glPushMatrix();
-
-      glRotated(theta,0,1,0);
-      glRotated(phi,1,0,0);
-
-      glScalef(scale*0.05,scale*0.05,scale*0.05);
-
-      glColor3f(0.00, 0.75, 1.00);
-      glCallList(terrainDL);
-      glPopMatrix();
-
-      shader.release();
+     shader.setUniformValue(loc, moon);
+   }
+   else
+   {
+     printf("failed to share moon with shader!\n");
    }
 
+   loc = shader.uniformLocation("lightFactor");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, lightPos[1]);
+   }
+   else
+   {
+     printf("failed to share lightFactor with shader!\n");
+   }
+
+   loc = shader.uniformLocation("rock_texture");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, 0);
+      glActiveTexture(GL_TEXTURE0);
+      glEnable(GL_TEXTURE_2D);
+      glBindTexture(GL_TEXTURE_2D, rock_texture);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   }
+   else
+   {
+      printf("failed to share rock_texture with shader!\n");
+   }
+   loc = shader.uniformLocation("grass_texture");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, 1);
+      glActiveTexture(GL_TEXTURE1);
+      glEnable(GL_TEXTURE_2D);
+      glBindTexture(GL_TEXTURE_2D, grass_texture);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   }
+   else
+   {
+      printf("failed to share rock_texture with shader!\n");
+   }
+
+   //  Undo transofrmations
+   glPopMatrix();
+
+   // Draw the terrain
+   glPushMatrix();
+
+   glRotated(theta,0,1,0);
+   glRotated(phi,1,0,0);
+
+   glScalef(scale*0.05,scale*0.05,scale*0.05);
+
+   glColor3f(0.00, 0.75, 1.00);
+   glCallList(terrainDL);
+   glPopMatrix();
+
+   shader.release();
+
+   // Skybox
    skyBox(dim);
 
-   //  Draw light position as sphere
+   // Draw light position as sphere
    glDisable(GL_LIGHTING);
    glColor3f(1,1,1);
    glPushMatrix();
@@ -467,6 +473,6 @@ void TerrainView::paintGL()
    glutSolidSphere(0.02,10,10);
    glPopMatrix();
 
-   //  Emit message to display
+   // Emit message to display
    emit message("Theta angle at "+QString::number(theta)+" degrees\nPhi angle at "+QString::number(phi)+" degrees");
 }
