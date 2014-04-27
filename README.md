@@ -24,6 +24,8 @@ make
  * Implement user control over noise parameters using Qt GUI elements
  * Lighting
  * Display generated noise texture in separate viewing window
+
+
 * **What remains**
  * Texturing using sampling based on terrain height
  * Texture layers selectable by user
@@ -35,7 +37,5 @@ make
     + User controlled rate
     + ~~Moonlight phase at "night"~~ 
  * ~~Fix zooming controls for "god mode"~~
- * Add skybox
- * Add "human" view mode
-   + Lens flare when looking at sun
+ * Fix skybox
  * Shadows (lol)
