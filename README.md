@@ -34,7 +34,7 @@ make
  * ~~Light moves like the sun~~
     + User controlled rate
     + ~~Moonlight phase at "night"~~ 
- * Fix zooming controls for "god mode"
+ * ~~Fix zooming controls for "god mode"~~
  * Add skybox
  * Add "human" view mode
    + Lens flare when looking at sun
