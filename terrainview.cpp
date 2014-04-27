@@ -138,30 +138,16 @@ void TerrainView::initializeGL()
    if (!shader2.link())
       exit(-1);
 
-   // Load skybox images
-   glActiveTexture(GL_TEXTURE9);
-   glEnable(GL_TEXTURE_2D);
-   QPixmap img0("sky0.bmp");
-   sky0 = bindTexture(img0,GL_TEXTURE_2D);
-   glBindTexture(GL_TEXTURE_2D, sky0);
-   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   glDisable(GL_TEXTURE_2D);
-
-   glActiveTexture(GL_TEXTURE9);
-   glEnable(GL_TEXTURE_2D);
-   QPixmap img1("sky1.bmp");
-   sky1 = bindTexture(img1,GL_TEXTURE_2D);
-   glBindTexture(GL_TEXTURE_2D, sky1);
-   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   glDisable(GL_TEXTURE_2D);
+   // Set skybox color
+   skyColor[0] = 0.0;
+   skyColor[1] = 0.50;
+   skyColor[2] = 0.75;
 
    // Load terrain textures
    glActiveTexture(GL_TEXTURE0);
    glEnable(GL_TEXTURE_2D);
-   QPixmap img2("rock.jpg");
-   rock_texture = bindTexture(img2,GL_TEXTURE_2D);
+   QPixmap img0("rock.jpg");
+   rock_texture = bindTexture(img0,GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, rock_texture);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -169,8 +155,8 @@ void TerrainView::initializeGL()
 
    glActiveTexture(GL_TEXTURE1);
    glEnable(GL_TEXTURE_2D);
-   QPixmap img3("grass.jpg");
-   grass_texture = bindTexture(img3,GL_TEXTURE_2D);
+   QPixmap img1("grass.jpg");
+   grass_texture = bindTexture(img1,GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, grass_texture);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -178,8 +164,8 @@ void TerrainView::initializeGL()
 
    glActiveTexture(GL_TEXTURE2);
    glEnable(GL_TEXTURE_2D);
-   QPixmap img4("snow.jpg");
-   snow_texture = bindTexture(img4,GL_TEXTURE_2D);
+   QPixmap img2("snow.jpg");
+   snow_texture = bindTexture(img2,GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, snow_texture);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -239,11 +225,24 @@ void TerrainView::idle()
    {
       moon = 1;
       lightPos[2] = -3*cos(az);
+
+      // Sky color isn't dynamic at night
+      skyColor[0] = 0.094;
+      skyColor[1] = 0.188;
+      skyColor[2] = 0.376;
    }
-   else
+   else // Daytime: skybox is redder at sunrise/set, blue at midday
    {
       moon = 0;
+      skyColor[0] = fabs(cos(az)) - 0.10;
+      skyColor[1] = (1.5 - fabs(cos(az))) * 0.40;
+      skyColor[2] = 1.0 - fabs(cos(az));
    }
+
+   // Dim sky color based on light position
+   skyColor[0] *= 1.0 - fabs(lightPos[2]/3);
+   skyColor[1] *= 1.0 - fabs(lightPos[2]/3);
+   skyColor[2] *= 1.0 - fabs(lightPos[2]/3);
 
    // Redraw the scene
    updateGL();
@@ -328,12 +327,9 @@ void TerrainView::wheelEvent(QWheelEvent* event)
 //
 void TerrainView::skyBox(double D)
 {
-   glActiveTexture(GL_TEXTURE9);
-   glColor3f(1,1,1);
-   glEnable(GL_TEXTURE_2D);
+   glColor3f(skyColor[0],skyColor[1],skyColor[2]);
 
    //  Sides
-   //glBindTexture(GL_TEXTURE_2D,sky0);
    glBegin(GL_QUADS);
    glTexCoord2f(0.00,0); glVertex3f(-D,-D,-D);
    glTexCoord2f(0.25,0); glVertex3f(+D,-D,-D);
@@ -355,14 +351,8 @@ void TerrainView::skyBox(double D)
    glTexCoord2f(1.00,1); glVertex3f(-D,+D,-D);
    glTexCoord2f(0.75,1); glVertex3f(-D,+D,+D);
    glEnd();
-   glDisable(GL_TEXTURE_2D);
-
-   glActiveTexture(GL_TEXTURE10);
-   glColor3f(1,1,1);
-   glEnable(GL_TEXTURE_2D);
 
    //  Top and bottom
-   glBindTexture(GL_TEXTURE_2D,sky1);
    glBegin(GL_QUADS);
    glTexCoord2f(0.0,0); glVertex3f(+D,+D,-D);
    glTexCoord2f(0.5,0); glVertex3f(+D,+D,+D);
@@ -374,8 +364,6 @@ void TerrainView::skyBox(double D)
    glTexCoord2f(0.5,0); glVertex3f(+D,-D,-D);
    glTexCoord2f(1.0,0); glVertex3f(-D,-D,-D);
    glEnd();
-
-   glDisable(GL_TEXTURE_2D);
 }
 
 //
@@ -465,12 +453,6 @@ void TerrainView::paintGL()
    if (loc >= 0)
    {
       shader.setUniformValue(loc, 0);
-      /*glActiveTexture(GL_TEXTURE0);
-      glEnable(GL_TEXTURE_2D);
-      glBindTexture(GL_TEXTURE_2D, rock_texture);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      glDisable(GL_TEXTURE_2D);*/
    }
    else
    {
@@ -480,12 +462,6 @@ void TerrainView::paintGL()
    if (loc >= 0)
    {
       shader.setUniformValue(loc, 1);
-      /*glActiveTexture(GL_TEXTURE1);
-      glEnable(GL_TEXTURE_2D);
-      glBindTexture(GL_TEXTURE_2D, grass_texture);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      glDisable(GL_TEXTURE_2D);*/
    }
    else
    {
@@ -495,12 +471,6 @@ void TerrainView::paintGL()
    if (loc >= 0)
    {
       shader.setUniformValue(loc, 2);
-      /*glActiveTexture(GL_TEXTURE2);
-      glEnable(GL_TEXTURE_2D);
-      glBindTexture(GL_TEXTURE_2D, snow_texture);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      glDisable(GL_TEXTURE_2D);*/
    }
    else
    {
@@ -512,12 +482,7 @@ void TerrainView::paintGL()
 
    // Draw the terrain
    glPushMatrix();
-
-   glRotated(theta,0,1,0);
-   glRotated(phi,1,0,0);
-
-   glScalef(scale*0.05,scale*0.05,scale*0.05);
-
+   glScalef(0.01, 0.01, 0.01);
    glCallList(terrainDL);
    glPopMatrix();
 
@@ -563,32 +528,29 @@ void TerrainView::paintGL()
    glBegin(GL_QUADS);
       
       // Split the water plane into 4 parts for better lighting 
-      glVertex3f(-2.4,0.35,-2.4);
-      glVertex3f(+0.0,0.35,-2.4);
+      glVertex3f(-2.55,0.35,-2.55);
+      glVertex3f(+0.0,0.35,-2.55);
       glVertex3f(+0.0,0.35,+0.0);
-      glVertex3f(-2.4,0.35,+0.0);
+      glVertex3f(-2.55,0.35,+0.0);
 
-      glVertex3f(-0.0,0.35,-2.4);
-      glVertex3f(+2.4,0.35,-2.4);
-      glVertex3f(+2.4,0.35,+0.0);
+      glVertex3f(-0.0,0.35,-2.55);
+      glVertex3f(+2.55,0.35,-2.55);
+      glVertex3f(+2.55,0.35,+0.0);
       glVertex3f(-0.0,0.35,+0.0);
 
       glVertex3f(-0.0,0.35,-0.0);
-      glVertex3f(+2.4,0.35,-0.0);
-      glVertex3f(+2.4,0.35,+2.4);
-      glVertex3f(-0.0,0.35,+2.4);
+      glVertex3f(+2.55,0.35,-0.0);
+      glVertex3f(+2.55,0.35,+2.55);
+      glVertex3f(-0.0,0.35,+2.55);
 
-      glVertex3f(-2.4,0.35,-0.0);
+      glVertex3f(-2.55,0.35,-0.0);
       glVertex3f(+0.0,0.35,-0.0);
-      glVertex3f(+0.0,0.35,+2.4);
-      glVertex3f(-2.4,0.35,+2.4);
+      glVertex3f(+0.0,0.35,+2.55);
+      glVertex3f(-2.55,0.35,+2.55);
    glEnd();
    glPopMatrix();
 
    shader2.release();
-
-   // Skybox -- not working :((
-   skyBox(dim);
 
    // Draw light position as sphere
    glDisable(GL_LIGHTING);
@@ -597,6 +559,9 @@ void TerrainView::paintGL()
    glTranslated(lightPos[0],lightPos[1],lightPos[2]);
    glutSolidSphere(0.02,10,10);
    glPopMatrix();
+
+   // Skybox
+   skyBox(dim);
 
    // Emit message to display
    emit message("Theta angle at "+QString::number(theta)+" degrees\nPhi angle at "+QString::number(phi)+" degrees");

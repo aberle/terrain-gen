@@ -52,9 +52,8 @@ private:
     int lastY;
     float zoom;
 
-    // skybox
-    int sky0;
-    int sky1;
+    // skybox color
+    float skyColor[3];
 
     // terrain textures
     int rock_texture;
