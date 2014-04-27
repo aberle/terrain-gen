@@ -8,6 +8,7 @@
 #include <QGLWidget>
 #include <QString>
 #include <QGLShaderProgram>
+#include <QGLFunctions>
 #include <iostream>
 
 class TerrainView : public QGLWidget
@@ -32,6 +33,7 @@ private:
     double dim;         // Size of world
     QGLShaderProgram shader;  // Terrain shader
     QGLShaderProgram shader2; // Water shader
+    QGLShaderProgram shader3; // Clouds shader
     float scale;        // Size of terrain
 
     int terrainDL;
@@ -61,6 +63,9 @@ private:
     int snow_texture;
     int sand_texture;
 
+    // clouds
+
+
 //  Public access to this widget
 public:
     TerrainView(QWidget* parent=0);                      //  Constructor
@@ -80,6 +85,8 @@ public slots:
     void initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude); // Create terrain using noise
     void skyBox(double D);             // Draw skybox
     void setCamera();                  // Camera settings
+    void initClouds();                 // Initialize cloud particle locations
+    void drawClouds();                 // Draw cloud particles        
 signals:
     void message(QString text);        // Signal for messages
     void multMessage(QString text);

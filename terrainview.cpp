@@ -8,6 +8,77 @@
 
 extern float *terrainHeights;
 
+//  Set up array indexes for program
+#define START_ARRAY 5
+//  Point arrays
+#define N 1
+float Vert[3*N*N];
+float Color[3*N*N];
+float Start[N*N];
+
+/*
+ *  Initialize particles
+ */
+void TerrainView::initClouds(void)
+{
+   //  Array Pointers
+   float* vert  = Vert;
+   float* color = Color;
+   float* start = Start;
+   //  Loop over NxN patch
+   int i,j;
+   int n = N;
+   for (i=0;i<n;i++)
+      for (j=0;j<n;j++)
+      {
+         //  Location x,y,z
+         *vert++ = (i+0.5)/n-0.75;
+         *vert++ = 0.75;
+         *vert++ = (j+0.5)/n-0.75;
+         //  Color r,g,b (0.5-1.0)
+         *color++ = 1;//frand(0.5,0.5);
+         *color++ = 1;//frand(0.5,0.5);
+         *color++ = 1;//frand(0.5,0.5);
+         //  Launch time
+         *start++ = 1.0;//frand(2.0,0.0);
+      }
+}
+
+/*
+ *  Draw particles
+ */
+void TerrainView::drawClouds(void)
+{
+   //  Set particle size
+   glPointSize(100);
+   //  Point vertex location to local array Vert
+   glVertexPointer(3,GL_FLOAT,0,Vert);
+   //  Point color array to local array Color
+   glColorPointer(3,GL_FLOAT,0,Color);
+   //  Point attribute arrays to local arrays
+   //glVertexAttribPointer(START_ARRAY,1,GL_FLOAT,GL_FALSE,0,Start);
+   //  Enable arrays used by DrawArrays
+   glEnableClientState(GL_VERTEX_ARRAY);
+   glEnableClientState(GL_COLOR_ARRAY);
+   //glEnableVertexAttribArray(START_ARRAY);
+   //  Set transparent large particles
+   glEnable(GL_POINT_SPRITE);
+   glTexEnvi(GL_POINT_SPRITE,GL_COORD_REPLACE,GL_TRUE);
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+   glDepthMask(0);
+   //  Draw arrays
+   glDrawArrays(GL_POINTS,0,N*N);
+   //  Reset
+   glDisable(GL_POINT_SPRITE);
+   glDisable(GL_BLEND);
+   glDepthMask(1);
+   //  Disable arrays
+   glDisableClientState(GL_VERTEX_ARRAY);
+   glDisableClientState(GL_COLOR_ARRAY);
+   //glDisableVertexAttribArray(START_ARRAY);
+}
+
 //
 //  Constructor
 //
@@ -50,6 +121,8 @@ TerrainView::TerrainView(QWidget* parent)
    lastX = -999;
    lastY = -999;
    zoom = 1.0;
+
+   initClouds();
 }
 
 void TerrainView::initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude)
@@ -124,6 +197,8 @@ void TerrainView::initializeGL()
    initTerrain(turbulencePasses, 1.0, 1.0, 1.0);
 
    // Build shaders
+
+   // Terrain texturing shader
    if (!shader.addShaderFromSourceFile(QGLShader::Vertex,"light.vert"))
       exit(-1);
    if (!shader.addShaderFromSourceFile(QGLShader::Fragment,"terrain_texture.frag"))
@@ -131,11 +206,20 @@ void TerrainView::initializeGL()
    if (!shader.link())
       exit(-1);
 
+   // Water shader
    if (!shader2.addShaderFromSourceFile(QGLShader::Vertex,"light.vert"))
       exit(-1);
    if (!shader2.addShaderFromSourceFile(QGLShader::Fragment,"water.frag"))
       exit(-1);
    if (!shader2.link())
+      exit(-1);
+
+   // Cloud shader
+   if (!shader3.addShaderFromSourceFile(QGLShader::Vertex,"cloud.vert"))
+      exit(-1);
+   if (!shader3.addShaderFromSourceFile(QGLShader::Fragment,"cloud.frag"))
+      exit(-1);
+   if (!shader3.link())
       exit(-1);
 
    // Set skybox color
@@ -175,6 +259,16 @@ void TerrainView::initializeGL()
    glEnable(GL_TEXTURE_2D);
    QPixmap img3("sand.jpg");
    sand_texture = bindTexture(img3,GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, sand_texture);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glDisable(GL_TEXTURE_2D);
+
+   // Load cloud particle sprites
+   glActiveTexture(GL_TEXTURE4);
+   glEnable(GL_TEXTURE_2D);
+   QPixmap img4("smoke.bmp");
+   sand_texture = bindTexture(img4,GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, sand_texture);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -580,6 +674,22 @@ void TerrainView::paintGL()
 
    // Skybox
    skyBox(dim);
+
+   // Clouds
+   shader3.bind();
+   loc = shader3.uniformLocation("sprite");
+   if (loc >= 0)
+   {
+     shader2.setUniformValue(loc, 4);
+   }
+   else
+   {
+     printf("failed to share sprite with shader3!\n");
+   }
+
+   drawClouds();
+
+   shader3.release();
 
    // Emit message to display
    emit message("Theta angle at "+QString::number(theta)+" degrees\nPhi angle at "+QString::number(phi)+" degrees");
