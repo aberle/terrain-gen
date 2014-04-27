@@ -139,16 +139,51 @@ void TerrainView::initializeGL()
       exit(-1);
 
    // Load skybox images
+   glActiveTexture(GL_TEXTURE9);
+   glEnable(GL_TEXTURE_2D);
    QPixmap img0("sky0.bmp");
    sky0 = bindTexture(img0,GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, sky0);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glDisable(GL_TEXTURE_2D);
+
+   glActiveTexture(GL_TEXTURE9);
+   glEnable(GL_TEXTURE_2D);
    QPixmap img1("sky1.bmp");
    sky1 = bindTexture(img1,GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, sky1);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glDisable(GL_TEXTURE_2D);
 
    // Load terrain textures
+   glActiveTexture(GL_TEXTURE0);
+   glEnable(GL_TEXTURE_2D);
    QPixmap img2("rock.jpg");
    rock_texture = bindTexture(img2,GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, rock_texture);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glDisable(GL_TEXTURE_2D);
+
+   glActiveTexture(GL_TEXTURE1);
+   glEnable(GL_TEXTURE_2D);
    QPixmap img3("grass.jpg");
    grass_texture = bindTexture(img3,GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, grass_texture);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glDisable(GL_TEXTURE_2D);
+
+   glActiveTexture(GL_TEXTURE2);
+   glEnable(GL_TEXTURE_2D);
+   QPixmap img4("snow.jpg");
+   snow_texture = bindTexture(img4,GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, snow_texture);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glDisable(GL_TEXTURE_2D);
 
    setCamera();
 }
@@ -293,15 +328,12 @@ void TerrainView::wheelEvent(QWheelEvent* event)
 //
 void TerrainView::skyBox(double D)
 {
-   glActiveTexture(GL_TEXTURE15);
+   glActiveTexture(GL_TEXTURE9);
    glColor3f(1,1,1);
    glEnable(GL_TEXTURE_2D);
 
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
    //  Sides
-   glBindTexture(GL_TEXTURE_2D,sky0);
+   //glBindTexture(GL_TEXTURE_2D,sky0);
    glBegin(GL_QUADS);
    glTexCoord2f(0.00,0); glVertex3f(-D,-D,-D);
    glTexCoord2f(0.25,0); glVertex3f(+D,-D,-D);
@@ -323,6 +355,11 @@ void TerrainView::skyBox(double D)
    glTexCoord2f(1.00,1); glVertex3f(-D,+D,-D);
    glTexCoord2f(0.75,1); glVertex3f(-D,+D,+D);
    glEnd();
+   glDisable(GL_TEXTURE_2D);
+
+   glActiveTexture(GL_TEXTURE10);
+   glColor3f(1,1,1);
+   glEnable(GL_TEXTURE_2D);
 
    //  Top and bottom
    glBindTexture(GL_TEXTURE_2D,sky1);
@@ -428,12 +465,12 @@ void TerrainView::paintGL()
    if (loc >= 0)
    {
       shader.setUniformValue(loc, 0);
-      glActiveTexture(GL_TEXTURE0);
+      /*glActiveTexture(GL_TEXTURE0);
       glEnable(GL_TEXTURE_2D);
       glBindTexture(GL_TEXTURE_2D, rock_texture);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      glDisable(GL_TEXTURE_2D);
+      glDisable(GL_TEXTURE_2D);*/
    }
    else
    {
@@ -443,16 +480,31 @@ void TerrainView::paintGL()
    if (loc >= 0)
    {
       shader.setUniformValue(loc, 1);
-      glActiveTexture(GL_TEXTURE1);
+      /*glActiveTexture(GL_TEXTURE1);
       glEnable(GL_TEXTURE_2D);
       glBindTexture(GL_TEXTURE_2D, grass_texture);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      glDisable(GL_TEXTURE_2D);
+      glDisable(GL_TEXTURE_2D);*/
    }
    else
    {
-      printf("failed to share rock_texture with shader!\n");
+      printf("failed to share grass_texture with shader!\n");
+   }
+   loc = shader.uniformLocation("snow_texture");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, 2);
+      /*glActiveTexture(GL_TEXTURE2);
+      glEnable(GL_TEXTURE_2D);
+      glBindTexture(GL_TEXTURE_2D, snow_texture);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      glDisable(GL_TEXTURE_2D);*/
+   }
+   else
+   {
+      printf("failed to share snow_texture with shader!\n");
    }
 
    //  Undo transofrmations
@@ -493,12 +545,11 @@ void TerrainView::paintGL()
      printf("failed to share lightFactor with shader!\n");
    }
 
-   // Enable blending
+   // Enable blending to make water slightly transparent
    glEnable(GL_BLEND);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-   glColor3f(0.00, 0.75, 1.00);
-
+   // Set water light parameters (crank up specular light to make it shiny)
    float waterSpecular[] = {0.01*70, 0.01*70, 0.01*70, 1.0};
    float waterDiffuse[]  = {0.01*50, 0.01*50, 0.01*50, 1.0};
    float waterAmbient[]  = {0.01*20, 0.01*20, 0.01*20, 1.0};
@@ -536,7 +587,7 @@ void TerrainView::paintGL()
 
    shader2.release();
 
-   // Skybox
+   // Skybox -- not working :((
    skyBox(dim);
 
    // Draw light position as sphere

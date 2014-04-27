@@ -16,6 +16,6 @@ void main()
    }
 
    color *= LightIntensity * multiplier;
-   //  Pad color with alpha
+   // Pad color with alpha
    gl_FragColor = vec4(color,0.55);
 }
