@@ -29,7 +29,7 @@ make
 * **What remains**
  * Texturing using sampling based on terrain height
  * Texture layers selectable by user
-   + Water areas more reflective or have a flat surface or both
+   + ~~Water areas more reflective or have a flat surface or both~~
  * Particle clouds using 3D noise sampled by shader
  * 3D noise parameters selectable by user
    + Moving clouds
