@@ -171,6 +171,15 @@ void TerrainView::initializeGL()
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
    glDisable(GL_TEXTURE_2D);
 
+   glActiveTexture(GL_TEXTURE3);
+   glEnable(GL_TEXTURE_2D);
+   QPixmap img3("sand.jpg");
+   sand_texture = bindTexture(img3,GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, sand_texture);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glDisable(GL_TEXTURE_2D);
+
    setCamera();
 }
 
@@ -475,6 +484,15 @@ void TerrainView::paintGL()
    else
    {
       printf("failed to share snow_texture with shader!\n");
+   }
+   loc = shader.uniformLocation("sand_texture");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, 3);
+   }
+   else
+   {
+      printf("failed to share sand_texture with shader!\n");
    }
 
    //  Undo transofrmations

@@ -59,6 +59,7 @@ private:
     int rock_texture;
     int grass_texture;
     int snow_texture;
+    int sand_texture;
 
 //  Public access to this widget
 public:
