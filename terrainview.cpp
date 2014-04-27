@@ -11,20 +11,16 @@ extern float *terrainHeights;
 //  Set up array indexes for program
 #define START_ARRAY 5
 //  Point arrays
-#define N 1
+#define N 5
 float Vert[3*N*N];
-float Color[3*N*N];
-float Start[N*N];
 
-/*
- *  Initialize particles
- */
+//
+//  Initialize particles
+//
 void TerrainView::initClouds(void)
 {
    //  Array Pointers
    float* vert  = Vert;
-   float* color = Color;
-   float* start = Start;
    //  Loop over NxN patch
    int i,j;
    int n = N;
@@ -32,35 +28,23 @@ void TerrainView::initClouds(void)
       for (j=0;j<n;j++)
       {
          //  Location x,y,z
-         *vert++ = (i+0.5)/n-0.75;
-         *vert++ = 0.75;
-         *vert++ = (j+0.5)/n-0.75;
-         //  Color r,g,b (0.5-1.0)
-         *color++ = 1;//frand(0.5,0.5);
-         *color++ = 1;//frand(0.5,0.5);
-         *color++ = 1;//frand(0.5,0.5);
-         //  Launch time
-         *start++ = 1.0;//frand(2.0,0.0);
+         *vert++ = i-(n/2);
+         *vert++ = 1.5;
+         *vert++ = j-(n/2);
       }
 }
 
-/*
- *  Draw particles
- */
+//
+//  Draw particles
+//
 void TerrainView::drawClouds(void)
 {
    //  Set particle size
    glPointSize(100);
    //  Point vertex location to local array Vert
    glVertexPointer(3,GL_FLOAT,0,Vert);
-   //  Point color array to local array Color
-   glColorPointer(3,GL_FLOAT,0,Color);
-   //  Point attribute arrays to local arrays
-   //glVertexAttribPointer(START_ARRAY,1,GL_FLOAT,GL_FALSE,0,Start);
    //  Enable arrays used by DrawArrays
    glEnableClientState(GL_VERTEX_ARRAY);
-   glEnableClientState(GL_COLOR_ARRAY);
-   //glEnableVertexAttribArray(START_ARRAY);
    //  Set transparent large particles
    glEnable(GL_POINT_SPRITE);
    glTexEnvi(GL_POINT_SPRITE,GL_COORD_REPLACE,GL_TRUE);
@@ -75,8 +59,6 @@ void TerrainView::drawClouds(void)
    glDepthMask(1);
    //  Disable arrays
    glDisableClientState(GL_VERTEX_ARRAY);
-   glDisableClientState(GL_COLOR_ARRAY);
-   //glDisableVertexAttribArray(START_ARRAY);
 }
 
 //
@@ -680,12 +662,22 @@ void TerrainView::paintGL()
    loc = shader3.uniformLocation("sprite");
    if (loc >= 0)
    {
-     shader2.setUniformValue(loc, 4);
+     shader3.setUniformValue(loc, 4);
    }
    else
    {
      printf("failed to share sprite with shader3!\n");
    }
+   loc = shader3.uniformLocation("time");
+   if (loc >= 0)
+   {
+      shader3.setUniformValue(loc, (GLfloat)(glutGet(GLUT_ELAPSED_TIME)/10000.0));
+   }
+   else
+   {
+      printf("failed to share time with shader3\n");
+   }
+
 
    drawClouds();
 
