@@ -123,12 +123,19 @@ void TerrainView::initializeGL()
 
    initTerrain(turbulencePasses, 1.0, 1.0, 1.0);
 
-   // Build shader
+   // Build shaders
    if (!shader.addShaderFromSourceFile(QGLShader::Vertex,"light.vert"))
       exit(-1);
-   if (!shader.addShaderFromSourceFile(QGLShader::Fragment,"checkers.frag"))
+   if (!shader.addShaderFromSourceFile(QGLShader::Fragment,"terrain_texture.frag"))
       exit(-1);
    if (!shader.link())
+      exit(-1);
+
+   if (!shader2.addShaderFromSourceFile(QGLShader::Vertex,"light.vert"))
+      exit(-1);
+   if (!shader2.addShaderFromSourceFile(QGLShader::Fragment,"water.frag"))
+      exit(-1);
+   if (!shader2.link())
       exit(-1);
 
    // Load skybox images
@@ -185,13 +192,14 @@ void TerrainView::resizeGL(int width, int height)
 void TerrainView::idle()
 {
    //  Elapsed time in seconds
-   double t = glutGet(GLUT_ELAPSED_TIME)/1480000.0;
+   double t = glutGet(GLUT_ELAPSED_TIME)/1000000.0;
    double az = fmod(90*t,2880.0);
 
    //  Set light position
    lightPos[1] = fabs(3*sin(az));
    lightPos[2] = 3*cos(az);
 
+   // Alternate between sun and moon
    if (3*sin(az) < 0.0)
    {
       moon = 1;
@@ -202,8 +210,7 @@ void TerrainView::idle()
       moon = 0;
    }
 
-   //printf("lightPos[1]:%f\n", lightPos[1]);
-
+   // Redraw the scene
    updateGL();
 }
 
@@ -459,16 +466,42 @@ void TerrainView::paintGL()
 
    glScalef(scale*0.05,scale*0.05,scale*0.05);
 
-   glColor3f(0.00, 0.75, 1.00);
    glCallList(terrainDL);
    glPopMatrix();
 
    shader.release();
 
-   // Water -- fix lighting
-   float waterSpecular[] = {0.01*70*(lightPos[1]*0.5),0.01*70*(lightPos[1]*0.5),0.01*70*(lightPos[1]*0.5),1.0};
-   float waterDiffuse[] = {0.01*5*(lightPos[1]*0.5),0.01*5*(lightPos[1]*0.5),0.01*5*(lightPos[1]*0.5),1.0};
-   float waterAmbient[] = {0.0, 0.0, 0.0, 1.0};
+   // Water
+   shader2.bind();
+
+   loc = shader2.uniformLocation("moon");
+   if (loc >= 0)
+   {
+     shader2.setUniformValue(loc, moon);
+   }
+   else
+   {
+     printf("failed to share moon with shader2!\n");
+   }
+   loc = shader2.uniformLocation("lightFactor");
+   if (loc >= 0)
+   {
+      shader2.setUniformValue(loc, lightPos[1]);
+   }
+   else
+   {
+     printf("failed to share lightFactor with shader!\n");
+   }
+
+   // Enable blending
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+   glColor3f(0.00, 0.75, 1.00);
+
+   float waterSpecular[] = {0.01*70, 0.01*70, 0.01*70, 1.0};
+   float waterDiffuse[]  = {0.01*50, 0.01*50, 0.01*50, 1.0};
+   float waterAmbient[]  = {0.01*20, 0.01*20, 0.01*20, 1.0};
 
    glLightfv(GL_LIGHT0, GL_SPECULAR, waterSpecular);
    glLightfv(GL_LIGHT0, GL_DIFFUSE, waterDiffuse);
@@ -477,12 +510,31 @@ void TerrainView::paintGL()
    glPushMatrix();
    glVertex3f(0.0, 0.25, 0.80);
    glBegin(GL_QUADS);
-      glVertex3f(-2.5,0.35,-2.5);
-      glVertex3f(+2.5,0.35,-2.5);
-      glVertex3f(+2.5,0.35,+2.5);
-      glVertex3f(-2.5,0.35,+2.5);
+      
+      // Split the water plane into 4 parts for better lighting 
+      glVertex3f(-2.4,0.35,-2.4);
+      glVertex3f(+0.0,0.35,-2.4);
+      glVertex3f(+0.0,0.35,+0.0);
+      glVertex3f(-2.4,0.35,+0.0);
+
+      glVertex3f(-0.0,0.35,-2.4);
+      glVertex3f(+2.4,0.35,-2.4);
+      glVertex3f(+2.4,0.35,+0.0);
+      glVertex3f(-0.0,0.35,+0.0);
+
+      glVertex3f(-0.0,0.35,-0.0);
+      glVertex3f(+2.4,0.35,-0.0);
+      glVertex3f(+2.4,0.35,+2.4);
+      glVertex3f(-0.0,0.35,+2.4);
+
+      glVertex3f(-2.4,0.35,-0.0);
+      glVertex3f(+0.0,0.35,-0.0);
+      glVertex3f(+0.0,0.35,+2.4);
+      glVertex3f(-2.4,0.35,+2.4);
    glEnd();
    glPopMatrix();
+
+   shader2.release();
 
    // Skybox
    skyBox(dim);

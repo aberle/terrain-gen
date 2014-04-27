@@ -30,7 +30,8 @@ private:
     int light;          // Lighting
     double asp;         // Aspect ratio
     double dim;         // Size of world
-    QGLShaderProgram shader; //  Shader
+    QGLShaderProgram shader;  // Terrain shader
+    QGLShaderProgram shader2; // Water shader
     float scale;        // Size of terrain
 
     int terrainDL;
