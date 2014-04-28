@@ -65,9 +65,17 @@ private:
     int sand_texture;
     int terrainDL;      // Terrain call list
     float scale;        // Size of terrain
+    
+    // texturing controls
     float blend;        // Texture blending amount
     float sand_low;     // Lower bound of sand texture
     float sand_high;    // Upper bound of sand texture
+    float grass_low;    // Lower bound of grass texture
+    float grass_high;   // Upper bound of grass texture
+    float rock_low;     // Lower bound of rock texture
+    float rock_high;    // Upper bound of rock texture
+    float snow_low;     // Lower bound of snow texture
+    float snow_high;    // Upper bound of snow texture
 
     // clouds
     float cloud_textures[2];
@@ -82,26 +90,35 @@ public:
 
 //  Communications with other widgets
 public slots:
-    void setTheta(int angle);          // Slot to set horizontal angle
-    void setPhi(int angle);            // Slot to set vertical angle
-    void reGenTerrain();               // Slot to regenerate terrain
-    void idle();                       // Slot for idle function
-    void setTurbulence(QString val);   // Slot for setting turbulence factor
-    void setOctaves(QString val);      // Slot for setting octaves
-    void setPersistence(QString val);  // Slot for setting persistence
-    void setAmplitude(QString val);    // Slot for setting amplitude
-    void setTime(int new_time);        // Slot for changing time scale
-    void initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude); // Create terrain using noise
-    void skyBox(double D);             // Draw skybox
-    void setCamera();                  // Camera settings
-    void initClouds();                 // Initialize cloud particle locations
-    void drawClouds();                 // Draw cloud particles
-    void setCloudOpacity(int opacity); // Set cloud alpha
-    void setCloudDensity(int density); // Set number of clouds
-    void setWaterHeight(int height);   // Set height of water plane
-    void setBlend(int new_blend);      // Set texture blending amount for terrain
-    void setSandLowerBound(int new_val);// Set lower bound of sand texture
-    void setSandUpperBound(int new_val);// Set upper bound of sand texture
+    void setTheta(int angle);            // Slot to set horizontal angle
+    void setPhi(int angle);              // Slot to set vertical angle
+    void reGenTerrain();                 // Slot to regenerate terrain
+    void idle();                         // Slot for idle function
+    void setTurbulence(QString val);     // Slot for setting turbulence factor
+    void setOctaves(QString val);        // Slot for setting octaves
+    void setPersistence(QString val);    // Slot for setting persistence
+    void setAmplitude(QString val);      // Slot for setting amplitude
+    void setTime(int new_time);          // Slot for changing time scale
+    void initTerrain(int turbulencePasses, 
+                     float octaves, 
+                     float persistence, 
+                     float amplitude);   // Create terrain using noise
+    void skyBox(double D);               // Draw skybox
+    void setCamera();                    // Camera settings
+    void initClouds();                   // Initialize cloud particle locations
+    void drawClouds();                   // Draw cloud particles
+    void setCloudOpacity(int opacity);   // Set cloud alpha
+    void setCloudDensity(int density);   // Set number of clouds
+    void setWaterHeight(int height);     // Set height of water plane
+    void setBlend(int new_blend);        // Set texture blending amount for terrain
+    void setSandLowerBound(int new_val); // Set lower bound of sand texture
+    void setSandUpperBound(int new_val); // Set upper bound of sand texture
+    void setGrassLowerBound(int new_val);// Set lower bound of Grass texture
+    void setGrassUpperBound(int new_val);// Set upper bound of Grass texture
+    void setRockLowerBound(int new_val); // Set lower bound of Rock texture
+    void setRockUpperBound(int new_val); // Set upper bound of Rock texture
+    void setSnowLowerBound(int new_val); // Set lower bound of Snow texture
+    void setSnowUpperBound(int new_val); // Set upper bound of Snow texture
 
 //  Need to reimplement these methods inhereted from QGLWidget
 protected:

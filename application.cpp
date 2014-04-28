@@ -105,6 +105,54 @@ Application::Application()
    sandHighSlider->setTickPosition(QSlider::TicksBelow);
    sandHighSlider->setValue(30);
 
+   //  Create slider and set range to -30-160
+   QSlider* grassLowSlider = new QSlider(Qt::Horizontal);
+   grassLowSlider->setRange(-30,160);
+   //  Eye candy - set tick interval for display
+   grassLowSlider->setTickInterval(5);
+   grassLowSlider->setTickPosition(QSlider::TicksBelow);
+   grassLowSlider->setValue(30);
+
+   //  Create slider and set range to -30-160
+   QSlider* grassHighSlider = new QSlider(Qt::Horizontal);
+   grassHighSlider->setRange(-30,160);
+   //  Eye candy - set tick interval for display
+   grassHighSlider->setTickInterval(5);
+   grassHighSlider->setTickPosition(QSlider::TicksBelow);
+   grassHighSlider->setValue(45);
+
+   //  Create slider and set range to -30-160
+   QSlider* rockLowSlider = new QSlider(Qt::Horizontal);
+   rockLowSlider->setRange(-30,160);
+   //  Eye candy - set tick interval for display
+   rockLowSlider->setTickInterval(5);
+   rockLowSlider->setTickPosition(QSlider::TicksBelow);
+   rockLowSlider->setValue(45);
+
+   //  Create slider and set range to -30-160
+   QSlider* rockHighSlider = new QSlider(Qt::Horizontal);
+   rockHighSlider->setRange(-30,160);
+   //  Eye candy - set tick interval for display
+   rockHighSlider->setTickInterval(5);
+   rockHighSlider->setTickPosition(QSlider::TicksBelow);
+   rockHighSlider->setValue(70);
+
+   //  Create slider and set range to -30-160
+   QSlider* snowLowSlider = new QSlider(Qt::Horizontal);
+   snowLowSlider->setRange(-30,160);
+   //  Eye candy - set tick interval for display
+   snowLowSlider->setTickInterval(5);
+   snowLowSlider->setTickPosition(QSlider::TicksBelow);
+   snowLowSlider->setValue(70);
+
+   //  Create slider and set range to -30-160
+   QSlider* snowHighSlider = new QSlider(Qt::Horizontal);
+   snowHighSlider->setRange(-30,160);
+   //  Eye candy - set tick interval for display
+   snowHighSlider->setTickInterval(5);
+   snowHighSlider->setTickPosition(QSlider::TicksBelow);
+   snowHighSlider->setValue(150);
+
    // Big controls container
    QGroupBox* controls = new QGroupBox;
    QVBoxLayout* controlsLayout = new QVBoxLayout;
@@ -131,6 +179,18 @@ Application::Application()
    texLayout->addWidget(sandLowSlider);
    texLayout->addWidget(new QLabel("Sand High Bound"));
    texLayout->addWidget(sandHighSlider);
+   texLayout->addWidget(new QLabel("Grass Low Bound"));
+   texLayout->addWidget(grassLowSlider);
+   texLayout->addWidget(new QLabel("Grass High Bound"));
+   texLayout->addWidget(grassHighSlider);
+   texLayout->addWidget(new QLabel("Rock Low Bound"));
+   texLayout->addWidget(rockLowSlider);
+   texLayout->addWidget(new QLabel("Rock High Bound"));
+   texLayout->addWidget(rockHighSlider);
+   texLayout->addWidget(new QLabel("Snow Low Bound"));
+   texLayout->addWidget(snowLowSlider);
+   texLayout->addWidget(new QLabel("Snow High Bound"));
+   texLayout->addWidget(snowHighSlider);
    texControls->setLayout(texLayout);
 
    // Container for noise controls
@@ -183,6 +243,12 @@ Application::Application()
    connect(blendSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setBlend(int)));
    connect(sandLowSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setSandLowerBound(int)));
    connect(sandHighSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setSandUpperBound(int)));
+   connect(grassLowSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setGrassLowerBound(int)));
+   connect(grassHighSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setGrassUpperBound(int)));
+   connect(rockLowSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setRockLowerBound(int)));
+   connect(rockHighSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setRockUpperBound(int)));
+   connect(snowLowSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setSnowLowerBound(int)));
+   connect(snowHighSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setSnowUpperBound(int)));
    
    //  Connect clicked() signal of push button to regenerate terrain (and redraw noise image)
    connect(button, SIGNAL(clicked()) , terrainView , SLOT(reGenTerrain()));

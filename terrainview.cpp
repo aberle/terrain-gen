@@ -53,10 +53,16 @@ TerrainView::TerrainView(QWidget* parent)
    cloudVerts = (float*)malloc(cloudDensity*cloudDensity*3*sizeof(float));
    initClouds();
 
-   // texturing
+   // texturing defaults
    blend = 15.0;
    sand_low = -15.0;
    sand_high = 30.0;
+   grass_low  = 30.0;
+   grass_high = 45.0;
+   rock_low  = 45.0;
+   rock_high = 70.0;
+   snow_low  = 70.0;
+   snow_high = 150.0;
 }
 
 //
@@ -189,6 +195,57 @@ void TerrainView::setSandLowerBound(int new_val)
 void TerrainView::setSandUpperBound(int new_val)
 {
    sand_high = (float)new_val;
+   updateGL();
+}
+
+//
+// Set grass texture lower bound
+//
+void TerrainView::setGrassLowerBound(int new_val)
+{
+   grass_low = (float)new_val;
+   updateGL();
+}
+//
+// Set grass texture upper bound
+//
+void TerrainView::setGrassUpperBound(int new_val)
+{
+   grass_high = (float)new_val;
+   updateGL();
+}
+
+//
+// Set rock texture lower bound
+//
+void TerrainView::setRockLowerBound(int new_val)
+{
+   rock_low = (float)new_val;
+   updateGL();
+}
+//
+// Set rock texture upper bound
+//
+void TerrainView::setRockUpperBound(int new_val)
+{
+   rock_high = (float)new_val;
+   updateGL();
+}
+
+//
+// Set snow texture lower bound
+//
+void TerrainView::setSnowLowerBound(int new_val)
+{
+   snow_low = (float)new_val;
+   updateGL();
+}
+//
+// Set snow texture upper bound
+//
+void TerrainView::setSnowUpperBound(int new_val)
+{
+   snow_high = (float)new_val;
    updateGL();
 }
 
@@ -636,6 +693,7 @@ void TerrainView::paintGL()
    {
       printf("failed to share sand_texture with shader!\n");
    }
+
    loc = shader.uniformLocation("blend");
    if (loc >= 0)
    {
@@ -662,6 +720,60 @@ void TerrainView::paintGL()
    else
    {
       printf("failed to share sand_high with shader!\n");
+   }
+   loc = shader.uniformLocation("grass_low");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, (GLfloat)grass_low);
+   }
+   else
+   {
+      printf("failed to share grass_low with shader!\n");
+   }
+   loc = shader.uniformLocation("grass_high");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, (GLfloat)grass_high);
+   }
+   else
+   {
+      printf("failed to share grass_high with shader!\n");
+   }
+   loc = shader.uniformLocation("rock_low");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, (GLfloat)rock_low);
+   }
+   else
+   {
+      printf("failed to share rock_low with shader!\n");
+   }
+   loc = shader.uniformLocation("rock_high");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, (GLfloat)rock_high);
+   }
+   else
+   {
+      printf("failed to share rock_high with shader!\n");
+   }
+   loc = shader.uniformLocation("snow_low");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, (GLfloat)snow_low);
+   }
+   else
+   {
+      printf("failed to share snow_low with shader!\n");
+   }
+   loc = shader.uniformLocation("snow_high");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, (GLfloat)snow_high);
+   }
+   else
+   {
+      printf("failed to share snow_high with shader!\n");
    }
 
    //  Undo transofrmations
