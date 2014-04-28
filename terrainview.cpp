@@ -720,6 +720,15 @@ void TerrainView::paintGL()
    {
       printf("failed to share alpha with shader3\n");
    }
+   loc = shader3.uniformLocation("lightFactor");
+   if (loc >= 0)
+   {
+      shader3.setUniformValue(loc, (GLfloat)(lightPos[1]/3.0));
+   }
+   else
+   {
+      printf("failed to share lightFactor with shader3\n");
+   }
 
    drawClouds();
 

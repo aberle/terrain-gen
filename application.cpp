@@ -50,9 +50,9 @@ Application::Application()
    // Create shader button
    QPushButton *button = new QPushButton("Regenerate Terrain");
 
-   //  Create slider and set range to 1-10
+   //  Create slider and set range to 1-9
    QSlider* timeSlider = new QSlider(Qt::Horizontal);
-   timeSlider->setRange(1,10);
+   timeSlider->setRange(1,9);
    //  Eye candy - set tick interval for display
    timeSlider->setTickInterval(1);
    timeSlider->setTickPosition(QSlider::TicksBelow);
