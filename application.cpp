@@ -81,6 +81,14 @@ Application::Application()
    waterSlider->setTickPosition(QSlider::TicksBelow);
    waterSlider->setValue(35);
 
+   //  Create slider and set range to 0-100
+   QSlider* blendSlider = new QSlider(Qt::Horizontal);
+   blendSlider->setRange(1,50);
+   //  Eye candy - set tick interval for display
+   blendSlider->setTickInterval(5);
+   blendSlider->setTickPosition(QSlider::TicksBelow);
+   blendSlider->setValue(15);
+
    // Big controls container
    QGroupBox* controls = new QGroupBox;
    QVBoxLayout* controlsLayout = new QVBoxLayout;
@@ -96,8 +104,14 @@ Application::Application()
    envLayout->addWidget(densitySlider);
    envLayout->addWidget(new QLabel("Water Height"));
    envLayout->addWidget(waterSlider);
-
    envControls->setLayout(envLayout);
+
+   // Container for texturing controls
+   QGroupBox* texControls = new QGroupBox("Texturing Controls");
+   QVBoxLayout* texLayout = new QVBoxLayout;
+   texLayout->addWidget(new QLabel("Blend Level"));
+   texLayout->addWidget(blendSlider);
+   texControls->setLayout(texLayout);
 
    // Container for noise controls
    QGroupBox* noiseControls = new QGroupBox("Noise Controls");
@@ -115,6 +129,7 @@ Application::Application()
 
    // Add the sub-containers to the big controls container
    controlsLayout->addWidget(envControls);
+   controlsLayout->addWidget(texControls);
    controlsLayout->addWidget(noiseControls);
    controls->setLayout(controlsLayout);
 
@@ -143,6 +158,9 @@ Application::Application()
    connect(opacitySlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setCloudOpacity(int)));
    connect(densitySlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setCloudDensity(int)));
    connect(waterSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setWaterHeight(int)));
+
+   // Texturing sliders
+   connect(blendSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setBlend(int)));
    
    //  Connect clicked() signal of push button to regenerate terrain (and redraw noise image)
    connect(button, SIGNAL(clicked()) , terrainView , SLOT(reGenTerrain()));

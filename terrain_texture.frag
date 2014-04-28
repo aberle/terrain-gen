@@ -10,6 +10,7 @@ uniform sampler2D rock_texture;
 uniform sampler2D grass_texture;
 uniform sampler2D snow_texture;
 uniform sampler2D sand_texture;
+uniform float blend;
 
 void main()
 {
@@ -22,7 +23,7 @@ void main()
       color = texture2D(rock_texture, texture_coordinate0.st).rgb;
    }
 
-   float blend_amt =  15.0;
+   float blend_amt =  blend;
 
    // Calculate sand texturing
    float sand_low  = -15.0;

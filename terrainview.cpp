@@ -52,6 +52,9 @@ TerrainView::TerrainView(QWidget* parent)
    cloudDensity = 20;
    cloudVerts = (float*)malloc(cloudDensity*cloudDensity*3*sizeof(float));
    initClouds();
+
+   // texturing
+   blend = 15.0;
 }
 
 //
@@ -158,6 +161,15 @@ void TerrainView::setCloudDensity(int density)
 void TerrainView::setWaterHeight(int height)
 {
    waterHeight = (float)height/100.0;
+   updateGL();
+}
+
+//
+// Set texture terrain blending
+//
+void TerrainView::setBlend(int new_blend)
+{
+   blend = (float)new_blend;
    updateGL();
 }
 
@@ -604,6 +616,15 @@ void TerrainView::paintGL()
    else
    {
       printf("failed to share sand_texture with shader!\n");
+   }
+   loc = shader.uniformLocation("blend");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, blend);
+   }
+   else
+   {
+      printf("failed to share blend with shader!\n");
    }
 
    //  Undo transofrmations
