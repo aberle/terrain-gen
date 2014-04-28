@@ -22,10 +22,38 @@ void main()
       color = texture2D(rock_texture, texture_coordinate0.st).rgb;
    }
 
-   vec3 sand  =(smoothstep(-30.0, 45.0, position.y) - smoothstep(25.0, 35.0, position.y)) * texture2D(sand_texture, texture_coordinate0.st).rgb;
-   vec3 grass = (smoothstep(20.0, 50.0, position.y) - smoothstep(35.0, 50.0, position.y)) * texture2D(grass_texture, texture_coordinate0.st).rgb;
-   vec3 rock  = (smoothstep(30.0, 50.0, position.y) - smoothstep(55.0, 90.0, position.y)) * texture2D(rock_texture, texture_coordinate0.st).rgb;
-   vec3 snow  = (smoothstep(50.0, 80.0, position.y) - smoothstep(80.0, 150.0, position.y)) * texture2D(snow_texture, texture_coordinate0.st).rgb;
+   float blend_amt =  15.0;
+
+   // Calculate sand texturing
+   float sand_low  = -15.0;
+   float sand_high =  30.0;
+
+   vec3 sand  = (smoothstep(sand_low -blend_amt, sand_low +blend_amt, position.y) - 
+                 smoothstep(sand_high-blend_amt, sand_high+blend_amt, position.y)) 
+                 * texture2D(sand_texture, texture_coordinate0.st).rgb;
+
+   // Calculate grass texturing
+   float grass_low  = 30.0;
+   float grass_high = 45.0;
+
+   vec3 grass = (smoothstep(grass_low -blend_amt, grass_low +blend_amt, position.y) - 
+                 smoothstep(grass_high-blend_amt, grass_high+blend_amt, position.y)) 
+                 * texture2D(grass_texture, texture_coordinate0.st).rgb;
+
+   // Calculate rock texturing
+   float rock_low  = 45.0;
+   float rock_high = 70.0;
+   
+   vec3 rock  = (smoothstep(rock_low -blend_amt, rock_low +blend_amt, position.y) - 
+                 smoothstep(rock_high-blend_amt, rock_high+blend_amt, position.y)) 
+                 * texture2D(rock_texture, texture_coordinate0.st).rgb;
+   
+   // Calculate snow texturing
+   float snow_low  = 70.0;
+   float snow_high = 150.0;
+   vec3 snow  = (smoothstep(snow_low -blend_amt, snow_low +blend_amt, position.y) - 
+                 smoothstep(snow_high-blend_amt, snow_high+blend_amt, position.y)) 
+                 * texture2D(snow_texture, texture_coordinate0.st).rgb;
 
 
    color = vec3(0.0, 0.0, 0.0) + grass + rock + snow + sand;

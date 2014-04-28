@@ -30,7 +30,7 @@ Application::Application()
 
    // Create text entry fields
    QValidator* validator = new QIntValidator(2, 256);
-   QLineEdit* turb = new QLineEdit("64");
+   QLineEdit* turb = new QLineEdit("105");
    turb->setFixedWidth(50);
    turb->setValidator(validator);
 
@@ -65,13 +65,21 @@ Application::Application()
    opacitySlider->setTickPosition(QSlider::TicksBelow);
    opacitySlider->setValue(5);
 
-   //  Create slider and set range to 0-10
+   //  Create slider and set range to 0-30
    QSlider* densitySlider = new QSlider(Qt::Horizontal);
    densitySlider->setRange(1,30);
    //  Eye candy - set tick interval for display
    densitySlider->setTickInterval(5);
    densitySlider->setTickPosition(QSlider::TicksBelow);
    densitySlider->setValue(20);
+
+   //  Create slider and set range to 0-100
+   QSlider* waterSlider = new QSlider(Qt::Horizontal);
+   waterSlider->setRange(1,100);
+   //  Eye candy - set tick interval for display
+   waterSlider->setTickInterval(5);
+   waterSlider->setTickPosition(QSlider::TicksBelow);
+   waterSlider->setValue(35);
 
    // Big controls container
    QGroupBox* controls = new QGroupBox;
@@ -86,6 +94,9 @@ Application::Application()
    envLayout->addWidget(opacitySlider);
    envLayout->addWidget(new QLabel("Cloud Density"));
    envLayout->addWidget(densitySlider);
+   envLayout->addWidget(new QLabel("Water Height"));
+   envLayout->addWidget(waterSlider);
+
    envControls->setLayout(envLayout);
 
    // Container for noise controls
@@ -131,6 +142,7 @@ Application::Application()
    connect(timeSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setTime(int)));
    connect(opacitySlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setCloudOpacity(int)));
    connect(densitySlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setCloudDensity(int)));
+   connect(waterSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setWaterHeight(int)));
    
    //  Connect clicked() signal of push button to regenerate terrain (and redraw noise image)
    connect(button, SIGNAL(clicked()) , terrainView , SLOT(reGenTerrain()));

@@ -27,7 +27,7 @@ TerrainView::TerrainView(QWidget* parent)
    lightPos[3] = 1.0;
    
    // noise params
-   turbulencePasses = 32;
+   turbulencePasses = 105;
    octaves = 1.0;
    persistence = 1.0;
    amplitude = 1.0;
@@ -36,7 +36,7 @@ TerrainView::TerrainView(QWidget* parent)
    dim = 6.0;
    fov = 60.0;
    theta = -1.5;
-   phi   =  0.7;
+   phi   =  0.8;
 
    // mouse
    lastX = -999;
@@ -44,6 +44,7 @@ TerrainView::TerrainView(QWidget* parent)
    zoom = 1.0;
 
    // environment
+   waterHeight = 0.35;
    scale = 0.2;
    moon = 0;
    timeScale = 9;
@@ -149,6 +150,15 @@ void TerrainView::setCloudDensity(int density)
    // Set new density and reload clouds
    cloudDensity = density;
    initClouds();
+}
+
+// 
+// Set water plane height
+//
+void TerrainView::setWaterHeight(int height)
+{
+   waterHeight = (float)height/100.0;
+   updateGL();
 }
 
 //
@@ -647,25 +657,25 @@ void TerrainView::paintGL()
    glBegin(GL_QUADS);
       
       // Split the water plane into 4 parts for better lighting 
-      glVertex3f(-2.55,0.35,-2.55);
-      glVertex3f(+0.0,0.35,-2.55);
-      glVertex3f(+0.0,0.35,+0.0);
-      glVertex3f(-2.55,0.35,+0.0);
+      glVertex3f(-2.55,waterHeight,-2.55);
+      glVertex3f(+0.0,waterHeight,-2.55);
+      glVertex3f(+0.0,waterHeight,+0.0);
+      glVertex3f(-2.55,waterHeight,+0.0);
 
-      glVertex3f(-0.0,0.35,-2.55);
-      glVertex3f(+2.55,0.35,-2.55);
-      glVertex3f(+2.55,0.35,+0.0);
-      glVertex3f(-0.0,0.35,+0.0);
+      glVertex3f(-0.0,waterHeight,-2.55);
+      glVertex3f(+2.55,waterHeight,-2.55);
+      glVertex3f(+2.55,waterHeight,+0.0);
+      glVertex3f(-0.0,waterHeight,+0.0);
 
-      glVertex3f(-0.0,0.35,-0.0);
-      glVertex3f(+2.55,0.35,-0.0);
-      glVertex3f(+2.55,0.35,+2.55);
-      glVertex3f(-0.0,0.35,+2.55);
+      glVertex3f(-0.0,waterHeight,-0.0);
+      glVertex3f(+2.55,waterHeight,-0.0);
+      glVertex3f(+2.55,waterHeight,+2.55);
+      glVertex3f(-0.0,waterHeight,+2.55);
 
-      glVertex3f(-2.55,0.35,-0.0);
-      glVertex3f(+0.0,0.35,-0.0);
-      glVertex3f(+0.0,0.35,+2.55);
-      glVertex3f(-2.55,0.35,+2.55);
+      glVertex3f(-2.55,waterHeight,-0.0);
+      glVertex3f(+0.0,waterHeight,-0.0);
+      glVertex3f(+0.0,waterHeight,+2.55);
+      glVertex3f(-2.55,waterHeight,+2.55);
    glEnd();
    glPopMatrix();
 

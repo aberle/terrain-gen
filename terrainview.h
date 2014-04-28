@@ -42,6 +42,7 @@ private:
     // environment
     int moon;
     int timeScale;
+    float waterHeight;
 
     // noise
     int turbulencePasses;
@@ -94,6 +95,7 @@ public slots:
     void drawClouds();                 // Draw cloud particles
     void setCloudOpacity(int opacity); // Set cloud alpha
     void setCloudDensity(int density); // Set number of clouds
+    void setWaterHeight(int height);   // Set height of water plane
 
 //  Need to reimplement these methods inhereted from QGLWidget
 protected:
