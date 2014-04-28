@@ -351,9 +351,9 @@ void TerrainView::idle()
       lightPos[2] = -3*cos(az);
 
       // Sky color isn't dynamic at night
-      skyColor[0] = 0.094;
-      skyColor[1] = 0.188;
-      skyColor[2] = 0.376;
+      skyColor[0] = 0.075;
+      skyColor[1] = 0.150;
+      skyColor[2] = 0.301;
    }
    else // Daytime: skybox is redder at sunrise/set, blue at midday
    {
