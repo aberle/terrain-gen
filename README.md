@@ -11,29 +11,24 @@ make
 * View
  * Click on the scene and drag mouse to change view orientation
  * Scroll mouse wheel up and down to change zoom level
+* Environment
+ * First slider controls how quickly time elapses, set to slowest by default
+   * Time scale influences the day/night cycle as well as cloud movement
+ * Second slider controls the alpha value of the cloud sprites
+ * Third slider controls the number of cloud sprites drawn
+ * Fourth slider controls the height of the translucent water plane
 * Noise
  * First text entry field controls turbulence (smoothing) passes (range: 2-256)
  * Second field controls noise octaves (range: 1.0-64.0)
  * Third field controls noise octave persistence (range: 1.0-64.0)
  * Fourth field controls noise amplitude (range: 1.0-64.0)
-
-### Features (both completed and to-be completed)
-* Completed
- * Noise computations implemented
- * Use 2D noise to generate untextured terrain
- * Implement user control over noise parameters using Qt GUI elements
- * Lighting
- * Display generated noise texture in separate viewing window
-
-
-* **What remains**
- * ~~Texturing using sampling based on terrain height~~
- * Texture layers selectable by user
-   + ~~Water areas more reflective or have a flat surface or both~~
- * ~~Particle clouds using 2D noise styled by shader~~
-   + ~~Moving clouds~~
- * ~~Light moves like the sun~~
-    + ~~User controlled rate~~
-    + ~~Moonlight phase at "night"~~ 
- * ~~Fix zooming controls for "god mode"~~
- * ~~Fix skybox~~
+ * Press `Regenerate Terrain` to recalculate heightmap with new noise parameters
+* Texturing
+ * First slider controls how much each texture "bleeds" into the ones surrounding it
+   * Set slider all the way to the left to disable this effect
+ * Low / High Bound Sliders:
+   * The span of each texture layer may be controlled by altering it's lower/upper height boundaries
+   * Using this feature, textures may be reordered entirely
+     * To get a better idea of where texture boundaries are, lower the blending level
+     * Setting a texture's lower bound above the upper bound will result in no texturing (black)
+   * To disable a texture, set both of its sliders all the way to the left
