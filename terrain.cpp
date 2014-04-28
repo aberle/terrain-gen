@@ -25,61 +25,10 @@ static float *terrainNormals = NULL;
 static float terrainStepLength = 1.0;
 static float terrainStepWidth = 1.0;
 
-static float terrainLightPos[4] = {0.0,0.1,0.1,0.0};
-static float terrainDiffuseCol[3] = {1.0,1.0,1.0};
-static float terrainAmbientCol[3] = {0.04,0.04,0.04};
-static int   terrainSimLight = 1;
-
 float n1[3] = {0.0,0.0,0.0},n2[3] = {0.0,0.0,0.0},n3[3] = {0.0,0.0,0.0},n4[3] = {0.0,0.0,0.0};
 
 static void terrainComputeNormals();
 static void terrainNormalize(float *v);
-
-
-void terrainLightPosition(float x, float y, float z,float w) 
-{
-    terrainLightPos[0] = x;
-    terrainLightPos[1] = y;
-    terrainLightPos[2] = z;
-    terrainLightPos[3] = w;
-
-    // Normalize this vector to save time later
-    if (terrainLightPos[3] == 0.0)
-        terrainNormalize(terrainLightPos);
-}
-
-void terrainDiffuseColor(float r, float g, float b) 
-{
-    terrainDiffuseCol[0] = r ;
-    terrainDiffuseCol[1] = g;
-    terrainDiffuseCol[2] = b;
-
-}
-
-void terrainAmbientColor(float r, float g, float b) 
-{
-    terrainAmbientCol[0] = r;
-    terrainAmbientCol[1] = g;
-    terrainAmbientCol[2] = b;
-}
-
-
-int terrainSimulateLighting(int sim) 
-{
-    terrainSimLight = sim;
-
-    // Just in case we don't have normals already
-    if (terrainNormals == NULL) 
-    {
-        terrainNormals = (float *)malloc(terrainGridWidth * terrainGridLength * sizeof(float) * 3);
-        terrainComputeNormals();
-    }
-    if (terrainNormals == NULL) 
-        return(TERRAIN_ERROR_MEMORY_PROBLEM);
-    else
-        return(TERRAIN_OK);
-}
-
 
 static float *terrainCrossProduct(int x1,int z1,int x2,int z2,int x3,int z3) 
 {
@@ -380,8 +329,6 @@ int terrainCreateDL()
     startL = - terrainGridLength / 2.0 + terrainGridLength;
 
     terrainDL = glGenLists(1);
-
-    terrainSimLight = 0;
 
     glNewList(terrainDL,GL_COMPILE);
     for (i = 0 ; i < terrainGridLength-1; i++) 
