@@ -28,7 +28,6 @@ public slots:
 // Need to reimplement these methods inhereted from QGLWidget
 protected:
     void initializeGL();                     // Initialize widget
-    void resizeGL(int width, int height);    // Resize widget
     void paintGL();                          // Draw widget
 };
 

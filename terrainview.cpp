@@ -48,8 +48,11 @@ TerrainView::TerrainView(QWidget* parent)
    scale = 0.2;
    moon = 0;
    timeScale = 9;
+   freezeTime = false;
+   savedTime = -1.0;
    cloudOpacity = 0.2;
    cloudDensity = 20;
+   cloudSprite = 4;
    cloudVerts = (float*)malloc(cloudDensity*cloudDensity*3*sizeof(float));
    initClouds();
 
@@ -139,7 +142,15 @@ void TerrainView::initTerrain(int turbulencePasses, float octaves, float persist
 void TerrainView::setTime(int new_time)
 {
    // Set scale
-   timeScale = 10-new_time;
+   if (new_time == 0)
+   {
+      freezeTime = true;;
+   }
+   else
+   {
+      freezeTime = false;
+      timeScale = 10-new_time;
+   }
    // Request redisplay
    updateGL();
 }
@@ -161,6 +172,22 @@ void TerrainView::setCloudDensity(int density)
    // Set new density and reload clouds
    cloudDensity = density;
    initClouds();
+}
+
+//
+// Choose which cloud sprite to use
+//
+void TerrainView::setCloudSprite(int index)
+{
+   if (index == 0)
+   {
+      cloudSprite = 4; // GL_TEXTURE4
+   }
+   else
+   {
+      cloudSprite = 5; // GL_TEXTURE5
+   }
+   updateGL();
 }
 
 // 
@@ -440,8 +467,23 @@ void TerrainView::resizeGL(int width, int height)
 
 void TerrainView::idle()
 {
+   double t;
    //  Elapsed time in seconds
-   double t = glutGet(GLUT_ELAPSED_TIME)/(300000.0*timeScale);
+   if (freezeTime)
+   {
+      if (savedTime == -1.0)
+      {
+         savedTime = glutGet(GLUT_ELAPSED_TIME);
+      }
+
+      t = savedTime/(300000.0*timeScale);
+   }
+   else
+   {
+      savedTime = -1.0;
+      t = glutGet(GLUT_ELAPSED_TIME)/(300000.0*timeScale);
+   }
+   
    double az = fmod(90*t,2880.0);
 
    //  Set light position
@@ -505,6 +547,9 @@ void TerrainView::setAmplitude(QString val)
 //
 void TerrainView::mouseReleaseEvent(QMouseEvent* event)
 {
+   // Prevent unused variable warning
+   lastX = *((int*)event);
+
    // Special flag to indicate that the last coordinates should be forgotten
    lastX = -999;
    lastY = -999;
@@ -883,7 +928,7 @@ void TerrainView::paintGL()
    loc = shader3.uniformLocation("sprite");
    if (loc >= 0)
    {
-     shader3.setUniformValue(loc, 4);
+     shader3.setUniformValue(loc, cloudSprite);
    }
    else
    {
@@ -892,7 +937,14 @@ void TerrainView::paintGL()
    loc = shader3.uniformLocation("time");
    if (loc >= 0)
    {
-      shader3.setUniformValue(loc, (GLfloat)(glutGet(GLUT_ELAPSED_TIME)/(10000.0*timeScale)));
+      if (freezeTime)
+      {
+         shader3.setUniformValue(loc, (GLfloat)(savedTime/(10000.0*timeScale)));
+      }
+      else
+      {
+         shader3.setUniformValue(loc, (GLfloat)(glutGet(GLUT_ELAPSED_TIME)/(10000.0*timeScale)));
+      }
    }
    else
    {

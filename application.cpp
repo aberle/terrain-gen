@@ -30,12 +30,12 @@ Application::Application()
    drawNoise->show();
 
    // Create text entry fields
-   QValidator* validator = new QIntValidator(2, 256);
+   QValidator* validator = new QIntValidator(2, 512);
    QLineEdit* turb = new QLineEdit("105");
    turb->setFixedWidth(50);
    turb->setValidator(validator);
 
-   QValidator* validator2 = new QDoubleValidator(1.0, 64.0, 1);
+   QValidator* validator2 = new QDoubleValidator(1.0, 16.0, 1);
    QLineEdit* oct = new QLineEdit("1.0");
    oct->setFixedWidth(50);
    oct->setValidator(validator2);
@@ -53,10 +53,11 @@ Application::Application()
 
    //  Create slider and set range to 1-9
    QSlider* timeSlider = new QSlider(Qt::Horizontal);
-   timeSlider->setRange(1,9);
+   timeSlider->setRange(0,9);
    //  Eye candy - set tick interval for display
    timeSlider->setTickInterval(1);
    timeSlider->setTickPosition(QSlider::TicksBelow);
+   timeSlider->setValue(1);
 
    //  Create slider and set range to 0-10
    QSlider* opacitySlider = new QSlider(Qt::Horizontal);
@@ -154,6 +155,11 @@ Application::Application()
    snowHighSlider->setTickPosition(QSlider::TicksBelow);
    snowHighSlider->setValue(150);
 
+   // Create combo box for cloud sprite choosing
+   QComboBox* cloudBox = new QComboBox;
+   cloudBox->addItem("Pointy");
+   cloudBox->addItem("Round");
+
    // Big controls container
    QGroupBox* controls = new QGroupBox;
    QVBoxLayout* controlsLayout = new QVBoxLayout;
@@ -167,6 +173,8 @@ Application::Application()
    envLayout->addWidget(opacitySlider);
    envLayout->addWidget(new QLabel("Cloud Density"));
    envLayout->addWidget(densitySlider);
+   envLayout->addWidget(new QLabel("Cloud Sprite"));
+   envLayout->addWidget(cloudBox);
    envLayout->addWidget(new QLabel("Water Height"));
    envLayout->addWidget(waterSlider);
    envControls->setLayout(envLayout);
@@ -197,9 +205,9 @@ Application::Application()
    // Container for noise controls
    QGroupBox* noiseControls = new QGroupBox("Noise Controls");
    QVBoxLayout* noiseLayout = new QVBoxLayout;
-   noiseLayout->addWidget(new QLabel("Smoothing Passes (2-256)"));
+   noiseLayout->addWidget(new QLabel("Smoothing Passes (2-512)"));
    noiseLayout->addWidget(turb);
-   noiseLayout->addWidget(new QLabel("Octaves (1.0-64.0)"));
+   noiseLayout->addWidget(new QLabel("Octaves (1.0-16.0)"));
    noiseLayout->addWidget(oct);
    noiseLayout->addWidget(new QLabel("Persistence (1.0-64.0)"));
    noiseLayout->addWidget(pers);
@@ -239,6 +247,9 @@ Application::Application()
    connect(opacitySlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setCloudOpacity(int)));
    connect(densitySlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setCloudDensity(int)));
    connect(waterSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setWaterHeight(int)));
+
+   // Cloud combo box
+   connect(cloudBox, SIGNAL(currentIndexChanged(int)) , terrainView , SLOT(setCloudSprite(int)));
 
    // Texturing sliders
    connect(blendSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setBlend(int)));

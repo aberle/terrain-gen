@@ -43,6 +43,8 @@ private:
     int moon;
     int timeScale;
     float waterHeight;
+    bool freezeTime;
+    float savedTime;
 
     // noise
     int turbulencePasses;
@@ -82,6 +84,7 @@ private:
     float *cloudVerts;
     float cloudOpacity;
     int cloudDensity;
+    int cloudSprite;
 
 //  Public access to this widget
 public:
@@ -119,6 +122,7 @@ public slots:
     void setRockUpperBound(int new_val); // Set upper bound of Rock texture
     void setSnowLowerBound(int new_val); // Set lower bound of Snow texture
     void setSnowUpperBound(int new_val); // Set upper bound of Snow texture
+    void setCloudSprite(int index);      // Choose which cloud sprite image to use
 
 //  Need to reimplement these methods inhereted from QGLWidget
 protected:
