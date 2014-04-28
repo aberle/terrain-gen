@@ -48,7 +48,7 @@ TerrainView::TerrainView(QWidget* parent)
    scale = 0.2;
    moon = 0;
    timeScale = 9;
-   cloudOpacity = 0.5;
+   cloudOpacity = 0.2;
    cloudDensity = 20;
    cloudVerts = (float*)malloc(cloudDensity*cloudDensity*3*sizeof(float));
    initClouds();

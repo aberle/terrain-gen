@@ -16,6 +16,7 @@ Application::Application()
    //  Set window title and location
    setWindowTitle(tr("Nicholas Aberle: Simplex Noise Terrain Generation"));
    move(0,0);
+   resize(1250,900);
 
    //  Create new terrainView widget
    TerrainView* terrainView = new TerrainView;
@@ -25,7 +26,7 @@ Application::Application()
    DrawNoise* drawNoise = new DrawNoise;
    drawNoise->setFixedSize(NOISE_HEIGHT-32,NOISE_WIDTH-32);
    drawNoise->setWindowTitle("Noise Texture");
-   drawNoise->move(1100,0);
+   drawNoise->move(1255,0);
    drawNoise->show();
 
    // Create text entry fields
@@ -63,7 +64,7 @@ Application::Application()
    //  Eye candy - set tick interval for display
    opacitySlider->setTickInterval(1);
    opacitySlider->setTickPosition(QSlider::TicksBelow);
-   opacitySlider->setValue(5);
+   opacitySlider->setValue(2);
 
    //  Create slider and set range to 0-30
    QSlider* densitySlider = new QSlider(Qt::Horizontal);
@@ -209,7 +210,6 @@ Application::Application()
 
    // Add the sub-containers to the big controls container
    controlsLayout->addWidget(envControls);
-   controlsLayout->addWidget(texControls);
    controlsLayout->addWidget(noiseControls);
    controls->setLayout(controlsLayout);
 
@@ -217,6 +217,7 @@ Application::Application()
    QHBoxLayout* layout = new QHBoxLayout;
    layout->addWidget(terrainView);
    layout->addWidget(controls);
+   layout->addWidget(texControls);
    setLayout(layout);
 
    // Set a timer with a 0 timeout to fake an 'idle' function
