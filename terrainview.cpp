@@ -47,11 +47,11 @@ TerrainView::TerrainView(QWidget* parent)
    waterHeight = 0.35;
    scale = 0.2;
    moon = 0;
-   timeScale = 9;
+   timeScale = 5;
    freezeTime = false;
    savedTime = -1.0;
    cloudOpacity = 0.2;
-   cloudDensity = 20;
+   cloudDensity = 5;
    cloudSprite = 4;
    cloudVerts = (float*)malloc(cloudDensity*cloudDensity*3*sizeof(float));
    initClouds();
@@ -146,14 +146,14 @@ void TerrainView::initTerrain(int turbulencePasses, float octaves, float persist
 void TerrainView::setTime(int new_time)
 {
    // Set scale
-   if (new_time == 0)
+   if (new_time == 10)
    {
-      freezeTime = true;;
+      freezeTime = true;
    }
    else
    {
       freezeTime = false;
-      timeScale = 10-new_time;
+      timeScale = 16-new_time;
    }
    // Request redisplay
    updateGL();

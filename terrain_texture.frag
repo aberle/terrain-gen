@@ -56,7 +56,7 @@ void main()
    if (moon == 1)
    {
       color.z += .20;
-      multiplier = 0.5;
+      multiplier = 0.75;
    }
 
    color *= LightIntensity * multiplier;

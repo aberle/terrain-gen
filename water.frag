@@ -11,7 +11,7 @@ void main()
    float multiplier = 1.0;
    if (moon == 1)
    {
-      multiplier = 0.5;
+      multiplier = 0.50;
    }
 
    color *= LightIntensity * multiplier;

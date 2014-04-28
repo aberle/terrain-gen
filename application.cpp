@@ -26,7 +26,7 @@ Application::Application()
    DrawNoise* drawNoise = new DrawNoise;
    drawNoise->setFixedSize(NOISE_HEIGHT-32,NOISE_WIDTH-32);
    drawNoise->setWindowTitle("Noise Texture");
-   drawNoise->move(1255,0);
+   drawNoise->move(1340,0);
    drawNoise->show();
 
    // Create text entry fields
@@ -51,13 +51,13 @@ Application::Application()
    // Create shader button
    QPushButton *button = new QPushButton("Regenerate Terrain");
 
-   //  Create slider and set range to 1-9
+   //  Create slider and set range to 5-15
    QSlider* timeSlider = new QSlider(Qt::Horizontal);
-   timeSlider->setRange(0,9);
+   timeSlider->setRange(10,15);
    //  Eye candy - set tick interval for display
    timeSlider->setTickInterval(1);
    timeSlider->setTickPosition(QSlider::TicksBelow);
-   timeSlider->setValue(1);
+   timeSlider->setValue(11);
 
    //  Create slider and set range to 0-10
    QSlider* opacitySlider = new QSlider(Qt::Horizontal);
@@ -73,7 +73,7 @@ Application::Application()
    //  Eye candy - set tick interval for display
    densitySlider->setTickInterval(5);
    densitySlider->setTickPosition(QSlider::TicksBelow);
-   densitySlider->setValue(20);
+   densitySlider->setValue(5);
 
    //  Create slider and set range to 0-100
    QSlider* waterSlider = new QSlider(Qt::Horizontal);
