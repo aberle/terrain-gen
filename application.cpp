@@ -50,12 +50,28 @@ Application::Application()
    // Create shader button
    QPushButton *button = new QPushButton("Regenerate Terrain");
 
-   //  Create slider and set range to 10-200
+   //  Create slider and set range to 1-10
    QSlider* timeSlider = new QSlider(Qt::Horizontal);
    timeSlider->setRange(1,10);
    //  Eye candy - set tick interval for display
    timeSlider->setTickInterval(1);
    timeSlider->setTickPosition(QSlider::TicksBelow);
+
+   //  Create slider and set range to 0-10
+   QSlider* opacitySlider = new QSlider(Qt::Horizontal);
+   opacitySlider->setRange(0,10);
+   //  Eye candy - set tick interval for display
+   opacitySlider->setTickInterval(1);
+   opacitySlider->setTickPosition(QSlider::TicksBelow);
+   opacitySlider->setValue(5);
+
+   //  Create slider and set range to 0-10
+   QSlider* densitySlider = new QSlider(Qt::Horizontal);
+   densitySlider->setRange(1,30);
+   //  Eye candy - set tick interval for display
+   densitySlider->setTickInterval(5);
+   densitySlider->setTickPosition(QSlider::TicksBelow);
+   densitySlider->setValue(10);
 
    // Big controls container
    QGroupBox* controls = new QGroupBox;
@@ -64,8 +80,12 @@ Application::Application()
    // Container for environment controls
    QGroupBox* envControls = new QGroupBox("Envionment Controls");
    QVBoxLayout* envLayout = new QVBoxLayout;
-   envLayout->addWidget(new QLabel("Time"));
+   envLayout->addWidget(new QLabel("Time Rate"));
    envLayout->addWidget(timeSlider);
+   envLayout->addWidget(new QLabel("Cloud Opacity"));
+   envLayout->addWidget(opacitySlider);
+   envLayout->addWidget(new QLabel("Cloud Density"));
+   envLayout->addWidget(densitySlider);
    envControls->setLayout(envLayout);
 
    // Container for noise controls
@@ -107,7 +127,10 @@ Application::Application()
    //  Connect textChanged signal of lineEdit to plug into setAmplitude function
    connect(amp, SIGNAL(textChanged(QString)), terrainView , SLOT(setAmplitude(QString)));
 
-  connect(timeSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setTime(int)));
+   // Environment sliders
+   connect(timeSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setTime(int)));
+   connect(opacitySlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setCloudOpacity(int)));
+   connect(densitySlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setCloudDensity(int)));
    
    //  Connect clicked() signal of push button to regenerate terrain (and redraw noise image)
    connect(button, SIGNAL(clicked()) , terrainView , SLOT(reGenTerrain()));

@@ -19,7 +19,7 @@ void main(void)
    }
 
    // Color
-   gl_FrontColor = vec4(.75, .75, .75, 1.0);
+   gl_FrontColor = vec4(.5, .5, .5, 1.0);
 
    // Transform particle location
    gl_Position = gl_ModelViewProjectionMatrix*vert;

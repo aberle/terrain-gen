@@ -9,67 +9,6 @@
 
 extern float *terrainHeights;
 
-#define CLOUD_WIDTH  20
-#define CLOUD_HEIGHT 20
-
-//
-//  Initialize particles
-//
-void TerrainView::initClouds(void)
-{
-   // Array pointer
-   float* vert  = cloudVerts;
-   // Loop over NxN patch
-   int i,j;
-   int n = CLOUD_WIDTH;
-   for (i=0;i<n;i++)
-   {
-      for (j=0;j<n;j++)
-      {
-         // Location x,y,z
-         double f = (double)rand() / RAND_MAX;
-         double val = -2.5 + f * (2.5 - (-2.5));
-         *vert++ = val;
-         *vert++ = turbulence(i, j, 1, 1, 1, 1) * (2.5 - 0.5) / 2 + (2.5 + 0.5) / 2;
-         f = (double)rand() / RAND_MAX;
-         val = -2.5 + f * (2.5 - (-2.5));
-         *vert++ = val;
-      }
-   }
-
-   for (i = 0; i < 3*CLOUD_WIDTH*CLOUD_HEIGHT; i++)
-   {
-      //printf("cloudVerts[%d] = %f\n", i, cloudVerts[i]);
-   }
-}
-
-//
-//  Draw particles
-//
-void TerrainView::drawClouds(void)
-{
-   //  Set particle size
-   glPointSize(1000);
-   //  Point vertex location to local array cloudVerts
-   glVertexPointer(3,GL_FLOAT,0,cloudVerts);
-   //  Enable arrays used by DrawArrays
-   glEnableClientState(GL_VERTEX_ARRAY);
-   //  Set transparent large particles
-   glEnable(GL_POINT_SPRITE);
-   glTexEnvi(GL_POINT_SPRITE,GL_COORD_REPLACE,GL_TRUE);
-   glEnable(GL_BLEND);
-   glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-   glDepthMask(0);
-   //  Draw arrays
-   glDrawArrays(GL_POINTS,0,CLOUD_WIDTH*CLOUD_HEIGHT);
-   //  Reset
-   glDisable(GL_POINT_SPRITE);
-   glDisable(GL_BLEND);
-   glDepthMask(1);
-   //  Disable arrays
-   glDisableClientState(GL_VERTEX_ARRAY);
-}
-
 //
 //  Constructor
 //
@@ -112,9 +51,67 @@ TerrainView::TerrainView(QWidget* parent)
    zoom = 1.0;
 
    // environment
-   timeScale = 1;
-
+   timeScale = 9;
+   cloudOpacity = 0.5;
+   cloudDensity = 10;
+   cloudVerts = (float*)malloc(cloudDensity*cloudDensity*3*sizeof(float));
    initClouds();
+}
+
+//
+//  Initialize particles
+//
+void TerrainView::initClouds(void)
+{
+   free(cloudVerts);
+   cloudVerts = (float*)malloc(cloudDensity*cloudDensity*3*sizeof(float));
+
+   // Array pointer
+   float* vert  = cloudVerts;
+   // Loop over NxN patch
+   int i,j;
+   int n = cloudDensity;
+   for (i=0;i<n;i++)
+   {
+      for (j=0;j<n;j++)
+      {
+         // Location x,y,z
+         double f = (double)rand() / RAND_MAX;
+         double val = -2.5 + f * (2.5 - (-2.5));
+         *vert++ = val;
+         *vert++ = turbulence(i, j, 1, 1, 1, 1) * (2.5 - 0.5) / 2 + (2.5 + 0.5) / 2;
+         f = (double)rand() / RAND_MAX;
+         val = -2.5 + f * (2.5 - (-2.5));
+         *vert++ = val;
+      }
+   }
+}
+
+//
+//  Draw particles
+//
+void TerrainView::drawClouds(void)
+{
+   //  Set particle size
+   glPointSize(500);
+   //  Point vertex location to local array cloudVerts
+   glVertexPointer(3,GL_FLOAT,0,cloudVerts);
+   //  Enable arrays used by DrawArrays
+   glEnableClientState(GL_VERTEX_ARRAY);
+   //  Set transparent large particles
+   glEnable(GL_POINT_SPRITE);
+   glTexEnvi(GL_POINT_SPRITE,GL_COORD_REPLACE,GL_TRUE);
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+   glDepthMask(0);
+   //  Draw arrays
+   glDrawArrays(GL_POINTS,0,cloudDensity*cloudDensity);
+   //  Reset
+   glDisable(GL_POINT_SPRITE);
+   glDisable(GL_BLEND);
+   glDepthMask(1);
+   //  Disable arrays
+   glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void TerrainView::initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude)
@@ -129,16 +126,34 @@ void TerrainView::initTerrain(int turbulencePasses, float octaves, float persist
    terrainDL = terrainCreateDL();
 }
 
-
 //
-// Set scale (TerrainView size)
+// Set time scale
 //
 void TerrainView::setTime(int new_time)
 {
    // Set scale
-   timeScale = new_time;
+   timeScale = 10-new_time;
    // Request redisplay
    updateGL();
+}
+
+//
+// Set cloud alpha
+//
+void TerrainView::setCloudOpacity(int opacity)
+{
+   // Set alpha
+   cloudOpacity = (float)opacity / 10.0;
+}
+
+//
+// Set cloud density
+//
+void TerrainView::setCloudDensity(int density)
+{
+   // Set new density and reload clouds
+   cloudDensity = density;
+   initClouds();
 }
 
 //
@@ -695,6 +710,15 @@ void TerrainView::paintGL()
    else
    {
       printf("failed to share time with shader3\n");
+   }
+   loc = shader3.uniformLocation("alpha");
+   if (loc >= 0)
+   {
+      shader3.setUniformValue(loc, (GLfloat)cloudOpacity);
+   }
+   else
+   {
+      printf("failed to share alpha with shader3\n");
    }
 
    drawClouds();

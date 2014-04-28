@@ -69,7 +69,9 @@ private:
 
     // clouds
     float cloud_textures[2];
-    float cloudVerts[3*NOISE_WIDTH*NOISE_HEIGHT];
+    float *cloudVerts;
+    float cloudOpacity;
+    int cloudDensity;
 
 //  Public access to this widget
 public:
@@ -91,7 +93,9 @@ public slots:
     void skyBox(double D);             // Draw skybox
     void setCamera();                  // Camera settings
     void initClouds();                 // Initialize cloud particle locations
-    void drawClouds();                 // Draw cloud particles        
+    void drawClouds();                 // Draw cloud particles
+    void setCloudOpacity(int opacity); // Set cloud alpha
+    void setCloudDensity(int density); // Set number of clouds
 
 //  Need to reimplement these methods inhereted from QGLWidget
 protected:
