@@ -18,32 +18,28 @@ class TerrainView : public QGLWidget
 Q_OBJECT
 //  Private data
 private:
+    // Shaders
+    QGLShaderProgram shader;  // Terrain shader
+    QGLShaderProgram shader2; // Water shader
+    QGLShaderProgram shader3; // Clouds shader
+
+    // Camera
     float  theta;       // Horizontal rotation angle
     float  phi;         // Vertical rotation angle
-    bool texture;       // Color/Texture toggle
+    float fov;          // Field of view (for perspective)
+    double asp;         // Aspect ratio
+    double dim;         // Size of world
+
+    // Lighting
+    float lightPos[4];
     int emission;       // Emission intensity (%)
     int ambient;        // Ambient intensity (%)
     int diffuse;        // Diffuse intensity (%)
     int specular;       // Specular intensity (%)
     int shininess;      // Shininess (power of two)
     float shinyvec[1];  // Shininess (value)
-    int th;             // Azimuth of view angle
-    int ph;             // Elevation of view angle
-    float fov;          // Field of view (for perspective)
-    int light;          // Lighting
-    double asp;         // Aspect ratio
-    double dim;         // Size of world
-    QGLShaderProgram shader;  // Terrain shader
-    QGLShaderProgram shader2; // Water shader
-    QGLShaderProgram shader3; // Clouds shader
-    float scale;        // Size of terrain
 
-    int terrainDL;
-    int usingTexture;
-    int usingMap;
-
-    //  Light position
-    float lightPos[4];
+    // environment
     int moon;
     int timeScale;
 
@@ -61,11 +57,13 @@ private:
     // skybox color
     float skyColor[3];
 
-    // terrain textures
-    int rock_texture;
+    // terrain
+    int rock_texture;   // textures
     int grass_texture;
     int snow_texture;
     int sand_texture;
+    int terrainDL;      // Terrain call list
+    float scale;        // Size of terrain
 
     // clouds
     float cloud_textures[2];
