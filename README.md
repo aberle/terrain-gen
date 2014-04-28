@@ -16,6 +16,7 @@ make
    * Time scale influences the day/night cycle as well as cloud movement
  * Second slider controls the alpha value of the cloud sprites
  * Third slider controls the number of cloud sprites drawn
+ * Cloud sprite drop-down menu controls which cloud sprite will be used (pointy or round)
  * Fourth slider controls the height of the translucent water plane
 * Noise
  * First text entry field controls turbulence (smoothing) passes (range: 2-512)
