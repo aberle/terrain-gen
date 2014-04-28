@@ -79,7 +79,7 @@ void TerrainView::initClouds(void)
          double f = (double)rand() / RAND_MAX;
          double val = -2.5 + f * (2.5 - (-2.5));
          *vert++ = val;
-         *vert++ = turbulence(i, j, 1, 1, 1, 1) * (2.5 - 0.5) / 2 + (2.5 + 0.5) / 2;
+         *vert++ = turbulence(i, j, 3, 4, 4, 4) * (2.5 - 0.5) / 2 + (2.5 + 0.5) / 2;
          f = (double)rand() / RAND_MAX;
          val = -2.5 + f * (2.5 - (-2.5));
          *vert++ = val;

@@ -27,15 +27,13 @@ make
 
 
 * **What remains**
- * Texturing using sampling based on terrain height
+ * ~~Texturing using sampling based on terrain height~~
  * Texture layers selectable by user
    + ~~Water areas more reflective or have a flat surface or both~~
- * Particle clouds using 3D noise sampled by shader
- * 3D noise parameters selectable by user
-   + Moving clouds
+ * ~~Particle clouds using 2D noise styled by shader~~
+   + ~~Moving clouds~~
  * ~~Light moves like the sun~~
-    + User controlled rate
+    + ~~User controlled rate~~
     + ~~Moonlight phase at "night"~~ 
  * ~~Fix zooming controls for "god mode"~~
- * Fix skybox
- * Shadows (lol)
+ * ~~Fix skybox~~
