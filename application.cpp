@@ -71,7 +71,7 @@ Application::Application()
    //  Eye candy - set tick interval for display
    densitySlider->setTickInterval(5);
    densitySlider->setTickPosition(QSlider::TicksBelow);
-   densitySlider->setValue(10);
+   densitySlider->setValue(20);
 
    // Big controls container
    QGroupBox* controls = new QGroupBox;
