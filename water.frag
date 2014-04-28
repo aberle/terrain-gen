@@ -11,7 +11,6 @@ void main()
    float multiplier = 1.0;
    if (moon == 1)
    {
-      color.z += .25;
       multiplier = 0.5;
    }
 
