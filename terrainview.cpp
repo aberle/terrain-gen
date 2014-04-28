@@ -93,7 +93,7 @@ void TerrainView::initClouds(void)
 void TerrainView::drawClouds(void)
 {
    //  Set particle size
-   glPointSize(500);
+   glPointSize(200);
    //  Point vertex location to local array cloudVerts
    glVertexPointer(3,GL_FLOAT,0,cloudVerts);
    //  Enable arrays used by DrawArrays
