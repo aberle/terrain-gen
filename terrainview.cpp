@@ -73,8 +73,12 @@ TerrainView::TerrainView(QWidget* parent)
 //
 void TerrainView::initClouds(void)
 {
+   // Allocate space for the cloud vertices
    free(cloudVerts);
    cloudVerts = (float*)malloc(cloudDensity*cloudDensity*3*sizeof(float));
+
+   // Set random seed
+   srand(time(NULL));
 
    // Array pointer
    float* vert  = cloudVerts;
