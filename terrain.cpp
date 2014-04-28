@@ -370,96 +370,32 @@ int terrainDim(float stepWidth, float stepLength)
         return(TERRAIN_ERROR_INVALID_PARAM);
 }
 
-
-static float terrainComputeLightFactor(int i,int j,int offseti, int offsetj) 
-{   
-    float factor,v[3];
-
-    // Directional light
-    if (terrainLightPos[3] == 0.0)
-    factor = terrainNormals[3*(i * terrainGridWidth + j)] * terrainLightPos[0] +
-                terrainNormals[3*(i * terrainGridWidth + j) +1] * terrainLightPos[1] +
-                terrainNormals[3*(i * terrainGridWidth + j) +2] * terrainLightPos[2];
-    // Positional light
-    else 
-    {
-        v[0] = terrainLightPos[0] - (j + offsetj)*terrainStepWidth;
-        v[1] = terrainLightPos[1] - terrainHeights[i*terrainGridWidth + j];
-        v[2] = terrainLightPos[2] - (offseti -i) * terrainStepLength;
-        terrainNormalize(v);
-        factor = terrainNormals[3*(i * terrainGridWidth + j)] * v[0] +
-                terrainNormals[3*(i * terrainGridWidth + j) +1] * v[1] +
-                terrainNormals[3*(i * terrainGridWidth + j) +2] * v[2];
-    }   
-    if (factor < 0)
-        factor = 0;
-
-    return(factor);
-}
-
-int terrainCreateDL(int lighting, int texture) 
+int terrainCreateDL() 
 {
     GLuint terrainDL;
-    float startW,startL,factor;
-    int i,j;//, terrainTexture;
-
-    // prevent unused var warning
-    factor = texture = 0;
-
-    /*switch (texture)
-    {
-        case 0:
-            terrainTexture = LoadTexBMP("rock1.bmp");
-            break;
-        case 1:
-            terrainTexture = LoadTexBMP("rock2.bmp");
-            break;
-        case 2:
-            terrainTexture = LoadTexBMP("rock3.bmp");
-            break;
-        default:
-            terrainTexture = LoadTexBMP("rock1.bmp");
-            break;
-    }*/
+    float startW,startL;
+    int i,j;
 
     startW = terrainGridWidth / 2.0 - terrainGridWidth;
     startL = - terrainGridLength / 2.0 + terrainGridLength;
 
     terrainDL = glGenLists(1);
 
-    if (lighting)
-        terrainSimLight = 0;
+    terrainSimLight = 0;
 
     glNewList(terrainDL,GL_COMPILE);
     for (i = 0 ; i < terrainGridLength-1; i++) 
     {
-        //glEnable(GL_TEXTURE_2D);
-        //glBindTexture(GL_TEXTURE_2D, terrainTexture);
-
         glBegin(GL_TRIANGLE_STRIP);
 
         for(j=0; j < terrainGridWidth; j++) 
         {
-            if (terrainSimLight  && terrainColors != NULL) 
-            {
-                factor = terrainComputeLightFactor(i+1,j,startL,startW);
-                glColor3f(terrainColors[3*((i+1)*terrainGridWidth + j)] * factor + terrainAmbientCol[0],
-                          terrainColors[3*((i+1)*terrainGridWidth + j)+1] * factor + terrainAmbientCol[1],
-                          terrainColors[3*((i+1)*terrainGridWidth + j)+2] * factor + terrainAmbientCol[2]);
-            }
-            else if (terrainSimLight  && terrainColors == NULL) 
-            {
-                factor = terrainComputeLightFactor(i+1,j,startL,startW);
-                glColor3f(terrainDiffuseCol[0] * factor + terrainAmbientCol[0],
-                            terrainDiffuseCol[1] * factor + terrainAmbientCol[1],
-                            terrainDiffuseCol[2] * factor + terrainAmbientCol[2]);
-            }
-            else if (terrainColors != NULL) 
+            if (terrainColors != NULL) 
                 glColor3f(terrainColors[3*((i+1)*terrainGridWidth + j)],
                           terrainColors[3*((i+1)*terrainGridWidth + j)+1],
                           terrainColors[3*((i+1)*terrainGridWidth + j)+2]);
     
-            if (terrainNormals != NULL && lighting)
+            if (terrainNormals != NULL)
                 glNormal3f(terrainNormals[3*((i+1)*terrainGridWidth + j)],
                           terrainNormals[3*((i+1)*terrainGridWidth + j)+1],
                           terrainNormals[3*((i+1)*terrainGridWidth + j)+2]);    
@@ -472,25 +408,11 @@ int terrainCreateDL(int lighting, int texture)
                 terrainHeights[(i+1)*terrainGridWidth + (j)],
                 (startL - (i+1))*terrainStepLength);// * stepL);                    
             
-            if (terrainSimLight && !lighting && terrainColors != NULL) 
-            {
-                factor = terrainComputeLightFactor(i,j,startL,startW);
-                glColor3f(terrainColors[3*(i*terrainGridWidth + j)] * factor + terrainAmbientCol[0],
-                          terrainColors[3*(i*terrainGridWidth + j)+1] * factor + terrainAmbientCol[1],
-                          terrainColors[3*(i*terrainGridWidth + j)+2] * factor + terrainAmbientCol[2]);
-            }
-            else if (terrainSimLight && !lighting && terrainColors == NULL) 
-            {
-                factor = terrainComputeLightFactor(i,j,startL,startW);
-                glColor3f(terrainDiffuseCol[0] * factor + terrainAmbientCol[0],
-                            terrainDiffuseCol[1] * factor + terrainAmbientCol[1],
-                            terrainDiffuseCol[2] * factor + terrainAmbientCol[2]);
-            }
-            else if (terrainColors != NULL) 
+            if (terrainColors != NULL) 
                 glColor3f(terrainColors[3*(i*terrainGridWidth + j)],
                           terrainColors[3*(i*terrainGridWidth + j)+1],
                           terrainColors[3*(i*terrainGridWidth + j)+2]);
-            if (terrainNormals != NULL && lighting)
+            if (terrainNormals != NULL)
                 glNormal3f(terrainNormals[3*(i*terrainGridWidth + j)],
                            terrainNormals[3*(i*terrainGridWidth + j)+1],
                            terrainNormals[3*(i*terrainGridWidth + j)+2]);

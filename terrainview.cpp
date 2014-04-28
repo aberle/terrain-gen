@@ -4,34 +4,43 @@
 #include <QtOpenGL>
 #include "terrainview.h"
 #include "terrain.h"
+#include "simplexnoise.h"
 #include <GL/glut.h>
 
 extern float *terrainHeights;
 
-//  Set up array indexes for program
-#define START_ARRAY 5
-//  Point arrays
-#define N 5
-float Vert[3*N*N];
+#define CLOUD_WIDTH  20
+#define CLOUD_HEIGHT 20
 
 //
 //  Initialize particles
 //
 void TerrainView::initClouds(void)
 {
-   //  Array Pointers
-   float* vert  = Vert;
-   //  Loop over NxN patch
+   // Array pointer
+   float* vert  = cloudVerts;
+   // Loop over NxN patch
    int i,j;
-   int n = N;
+   int n = CLOUD_WIDTH;
    for (i=0;i<n;i++)
+   {
       for (j=0;j<n;j++)
       {
-         //  Location x,y,z
-         *vert++ = i-(n/2);
-         *vert++ = 1.5;
-         *vert++ = j-(n/2);
+         // Location x,y,z
+         double f = (double)rand() / RAND_MAX;
+         double val = -2.5 + f * (2.5 - (-2.5));
+         *vert++ = val;
+         *vert++ = turbulence(i, j, 1, 1, 1, 1) * (2.5 - 0.5) / 2 + (2.5 + 0.5) / 2;
+         f = (double)rand() / RAND_MAX;
+         val = -2.5 + f * (2.5 - (-2.5));
+         *vert++ = val;
       }
+   }
+
+   for (i = 0; i < 3*CLOUD_WIDTH*CLOUD_HEIGHT; i++)
+   {
+      //printf("cloudVerts[%d] = %f\n", i, cloudVerts[i]);
+   }
 }
 
 //
@@ -40,9 +49,9 @@ void TerrainView::initClouds(void)
 void TerrainView::drawClouds(void)
 {
    //  Set particle size
-   glPointSize(100);
-   //  Point vertex location to local array Vert
-   glVertexPointer(3,GL_FLOAT,0,Vert);
+   glPointSize(1000);
+   //  Point vertex location to local array cloudVerts
+   glVertexPointer(3,GL_FLOAT,0,cloudVerts);
    //  Enable arrays used by DrawArrays
    glEnableClientState(GL_VERTEX_ARRAY);
    //  Set transparent large particles
@@ -52,7 +61,7 @@ void TerrainView::drawClouds(void)
    glBlendFunc(GL_SRC_ALPHA,GL_ONE);
    glDepthMask(0);
    //  Draw arrays
-   glDrawArrays(GL_POINTS,0,N*N);
+   glDrawArrays(GL_POINTS,0,CLOUD_WIDTH*CLOUD_HEIGHT);
    //  Reset
    glDisable(GL_POINT_SPRITE);
    glDisable(GL_BLEND);
@@ -85,15 +94,13 @@ TerrainView::TerrainView(QWidget* parent)
    lightPos[2] = 0.0;
    lightPos[3] = 1.0;
    moon = 0;
-   
-   scale = 0.2;
-   usingTexture = 0;
 
    // noise params
    turbulencePasses = 32;
    octaves = 1.0;
    persistence = 1.0;
    amplitude = 1.0;
+   scale = 0.2;
 
    // camera
    dim = 6.0;
@@ -103,6 +110,9 @@ TerrainView::TerrainView(QWidget* parent)
    lastX = -999;
    lastY = -999;
    zoom = 1.0;
+
+   // environment
+   timeScale = 1;
 
    initClouds();
 }
@@ -116,17 +126,17 @@ void TerrainView::initTerrain(int turbulencePasses, float octaves, float persist
       exit(-1);
    }
    terrainScale(0,100);
-   terrainDL = terrainCreateDL(light,usingTexture);
+   terrainDL = terrainCreateDL();
 }
 
 
 //
 // Set scale (TerrainView size)
 //
-void TerrainView::setScale(int new_scale)
+void TerrainView::setTime(int new_time)
 {
    // Set scale
-   scale = float(float(new_scale)/200);
+   timeScale = new_time;
    // Request redisplay
    updateGL();
 }
@@ -249,9 +259,18 @@ void TerrainView::initializeGL()
    // Load cloud particle sprites
    glActiveTexture(GL_TEXTURE4);
    glEnable(GL_TEXTURE_2D);
-   QPixmap img4("smoke.bmp");
-   sand_texture = bindTexture(img4,GL_TEXTURE_2D);
-   glBindTexture(GL_TEXTURE_2D, sand_texture);
+   QPixmap img4("cloud0.bmp");
+   cloud_textures[0] = bindTexture(img4,GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, cloud_textures[0]);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glDisable(GL_TEXTURE_2D);
+
+   glActiveTexture(GL_TEXTURE5);
+   glEnable(GL_TEXTURE_2D);
+   QPixmap img5("cloud1.bmp");
+   cloud_textures[1] = bindTexture(img5,GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, cloud_textures[1]);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
    glDisable(GL_TEXTURE_2D);
@@ -298,7 +317,7 @@ void TerrainView::resizeGL(int width, int height)
 void TerrainView::idle()
 {
    //  Elapsed time in seconds
-   double t = glutGet(GLUT_ELAPSED_TIME)/1000000.0;
+   double t = glutGet(GLUT_ELAPSED_TIME)/(300000.0*timeScale);
    double az = fmod(90*t,2880.0);
 
    //  Set light position
@@ -671,18 +690,14 @@ void TerrainView::paintGL()
    loc = shader3.uniformLocation("time");
    if (loc >= 0)
    {
-      shader3.setUniformValue(loc, (GLfloat)(glutGet(GLUT_ELAPSED_TIME)/10000.0));
+      shader3.setUniformValue(loc, (GLfloat)(glutGet(GLUT_ELAPSED_TIME)/(10000.0*timeScale)));
    }
    else
    {
       printf("failed to share time with shader3\n");
    }
 
-
    drawClouds();
 
    shader3.release();
-
-   // Emit message to display
-   emit message("Theta angle at "+QString::number(theta)+" degrees\nPhi angle at "+QString::number(phi)+" degrees");
 }

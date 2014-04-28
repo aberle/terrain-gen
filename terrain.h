@@ -14,7 +14,7 @@
 #define TERRAIN_OK						 0
 
 int generateTerrain(int normals, int turbulencePasses, float octaves, float persistence, float amplitude);
-int terrainCreateDL(int lighting, int texture);
+int terrainCreateDL();
 void terrainDestroy();
 int terrainScale(float min,float max);
 float terrainGetHeight(int x, int z);

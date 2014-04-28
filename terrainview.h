@@ -11,6 +11,8 @@
 #include <QGLFunctions>
 #include <iostream>
 
+#include "simplexnoise.h"
+
 class TerrainView : public QGLWidget
 {
 Q_OBJECT
@@ -43,7 +45,9 @@ private:
     //  Light position
     float lightPos[4];
     int moon;
+    int timeScale;
 
+    // noise
     int turbulencePasses;
     double octaves;
     double persistence;
@@ -64,7 +68,8 @@ private:
     int sand_texture;
 
     // clouds
-
+    float cloud_textures[2];
+    float cloudVerts[3*NOISE_WIDTH*NOISE_HEIGHT];
 
 //  Public access to this widget
 public:
@@ -81,15 +86,12 @@ public slots:
     void setOctaves(QString val);      // Slot for setting octaves
     void setPersistence(QString val);  // Slot for setting persistence
     void setAmplitude(QString val);    // Slot for setting amplitude
-    void setScale(int new_scale);      // Slot for changing terrain size
+    void setTime(int new_time);        // Slot for changing time scale
     void initTerrain(int turbulencePasses, float octaves, float persistence, float amplitude); // Create terrain using noise
     void skyBox(double D);             // Draw skybox
     void setCamera();                  // Camera settings
     void initClouds();                 // Initialize cloud particle locations
     void drawClouds();                 // Draw cloud particles        
-signals:
-    void message(QString text);        // Signal for messages
-    void multMessage(QString text);
 
 //  Need to reimplement these methods inhereted from QGLWidget
 protected:

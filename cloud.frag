@@ -10,8 +10,8 @@ void main()
    vec4 color = texture2D(sprite,gl_PointCoord.st);
 
    //  Set alpha
-   color.a = 1.0;
-   
+   color.a = 0.2;
+
    //  Blend point color with texture
    gl_FragColor = gl_Color*color;
 }
