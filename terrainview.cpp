@@ -187,6 +187,8 @@ void TerrainView::setBlend(int new_blend)
 void TerrainView::setSandLowerBound(int new_val)
 {
    sand_low = (float)new_val;
+   if (sand_low > sand_high)
+      sand_low = sand_high;
    updateGL();
 }
 //
@@ -195,6 +197,8 @@ void TerrainView::setSandLowerBound(int new_val)
 void TerrainView::setSandUpperBound(int new_val)
 {
    sand_high = (float)new_val;
+   if (sand_high < sand_low)
+      sand_high = sand_low;
    updateGL();
 }
 
@@ -204,6 +208,8 @@ void TerrainView::setSandUpperBound(int new_val)
 void TerrainView::setGrassLowerBound(int new_val)
 {
    grass_low = (float)new_val;
+   if (grass_low > grass_high)
+      grass_low = grass_high;
    updateGL();
 }
 //
@@ -212,6 +218,8 @@ void TerrainView::setGrassLowerBound(int new_val)
 void TerrainView::setGrassUpperBound(int new_val)
 {
    grass_high = (float)new_val;
+   if (grass_high < grass_low)
+      grass_high = grass_low;
    updateGL();
 }
 
@@ -221,6 +229,8 @@ void TerrainView::setGrassUpperBound(int new_val)
 void TerrainView::setRockLowerBound(int new_val)
 {
    rock_low = (float)new_val;
+   if (rock_low > rock_high)
+      rock_low = rock_high;
    updateGL();
 }
 //
@@ -229,6 +239,8 @@ void TerrainView::setRockLowerBound(int new_val)
 void TerrainView::setRockUpperBound(int new_val)
 {
    rock_high = (float)new_val;
+   if (rock_high < rock_low)
+      rock_high = rock_low;
    updateGL();
 }
 
@@ -238,6 +250,8 @@ void TerrainView::setRockUpperBound(int new_val)
 void TerrainView::setSnowLowerBound(int new_val)
 {
    snow_low = (float)new_val;
+   if (snow_low > snow_high)
+      snow_low = snow_high;
    updateGL();
 }
 //
@@ -246,6 +260,8 @@ void TerrainView::setSnowLowerBound(int new_val)
 void TerrainView::setSnowUpperBound(int new_val)
 {
    snow_high = (float)new_val;
+   if (snow_high < snow_low)
+      snow_high = snow_low;
    updateGL();
 }
 

@@ -30,5 +30,5 @@ make
    * The span of each texture layer may be controlled by altering it's lower/upper height boundaries
    * Using this feature, textures may be reordered entirely
      * To get a better idea of where texture boundaries are, lower the blending level
-     * Setting a texture's lower bound above the upper bound will result in no texturing (black)
+     * Setting a texture's lower bound above the upper bound will disable the texture
    * To disable a texture, set both of its sliders all the way to the left
