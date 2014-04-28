@@ -55,6 +55,8 @@ TerrainView::TerrainView(QWidget* parent)
 
    // texturing
    blend = 15.0;
+   sand_low = -15.0;
+   sand_high = 30.0;
 }
 
 //
@@ -170,6 +172,23 @@ void TerrainView::setWaterHeight(int height)
 void TerrainView::setBlend(int new_blend)
 {
    blend = (float)new_blend;
+   updateGL();
+}
+
+//
+// Set sand texture lower bound
+//
+void TerrainView::setSandLowerBound(int new_val)
+{
+   sand_low = (float)new_val;
+   updateGL();
+}
+//
+// Set sand texture upper bound
+//
+void TerrainView::setSandUpperBound(int new_val)
+{
+   sand_high = (float)new_val;
    updateGL();
 }
 
@@ -625,6 +644,24 @@ void TerrainView::paintGL()
    else
    {
       printf("failed to share blend with shader!\n");
+   }
+   loc = shader.uniformLocation("sand_low");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, (GLfloat)sand_low);
+   }
+   else
+   {
+      printf("failed to share sand_low with shader!\n");
+   }
+   loc = shader.uniformLocation("sand_high");
+   if (loc >= 0)
+   {
+      shader.setUniformValue(loc, (GLfloat)sand_high);
+   }
+   else
+   {
+      printf("failed to share sand_high with shader!\n");
    }
 
    //  Undo transofrmations

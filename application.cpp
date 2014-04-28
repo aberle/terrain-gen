@@ -81,13 +81,29 @@ Application::Application()
    waterSlider->setTickPosition(QSlider::TicksBelow);
    waterSlider->setValue(35);
 
-   //  Create slider and set range to 0-100
+   //  Create slider and set range to 0-50
    QSlider* blendSlider = new QSlider(Qt::Horizontal);
    blendSlider->setRange(1,50);
    //  Eye candy - set tick interval for display
    blendSlider->setTickInterval(5);
    blendSlider->setTickPosition(QSlider::TicksBelow);
    blendSlider->setValue(15);
+
+   //  Create slider and set range to -30-160
+   QSlider* sandLowSlider = new QSlider(Qt::Horizontal);
+   sandLowSlider->setRange(-30,160);
+   //  Eye candy - set tick interval for display
+   sandLowSlider->setTickInterval(5);
+   sandLowSlider->setTickPosition(QSlider::TicksBelow);
+   sandLowSlider->setValue(-15);
+
+   //  Create slider and set range to -30-160
+   QSlider* sandHighSlider = new QSlider(Qt::Horizontal);
+   sandHighSlider->setRange(-30,160);
+   //  Eye candy - set tick interval for display
+   sandHighSlider->setTickInterval(5);
+   sandHighSlider->setTickPosition(QSlider::TicksBelow);
+   sandHighSlider->setValue(30);
 
    // Big controls container
    QGroupBox* controls = new QGroupBox;
@@ -111,6 +127,10 @@ Application::Application()
    QVBoxLayout* texLayout = new QVBoxLayout;
    texLayout->addWidget(new QLabel("Blend Level"));
    texLayout->addWidget(blendSlider);
+   texLayout->addWidget(new QLabel("Sand Low Bound"));
+   texLayout->addWidget(sandLowSlider);
+   texLayout->addWidget(new QLabel("Sand High Bound"));
+   texLayout->addWidget(sandHighSlider);
    texControls->setLayout(texLayout);
 
    // Container for noise controls
@@ -161,6 +181,8 @@ Application::Application()
 
    // Texturing sliders
    connect(blendSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setBlend(int)));
+   connect(sandLowSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setSandLowerBound(int)));
+   connect(sandHighSlider, SIGNAL(valueChanged(int)) , terrainView , SLOT(setSandUpperBound(int)));
    
    //  Connect clicked() signal of push button to regenerate terrain (and redraw noise image)
    connect(button, SIGNAL(clicked()) , terrainView , SLOT(reGenTerrain()));

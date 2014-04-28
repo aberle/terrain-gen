@@ -65,7 +65,9 @@ private:
     int sand_texture;
     int terrainDL;      // Terrain call list
     float scale;        // Size of terrain
-    float blend;
+    float blend;        // Texture blending amount
+    float sand_low;     // Lower bound of sand texture
+    float sand_high;    // Upper bound of sand texture
 
     // clouds
     float cloud_textures[2];
@@ -98,6 +100,8 @@ public slots:
     void setCloudDensity(int density); // Set number of clouds
     void setWaterHeight(int height);   // Set height of water plane
     void setBlend(int new_blend);      // Set texture blending amount for terrain
+    void setSandLowerBound(int new_val);// Set lower bound of sand texture
+    void setSandUpperBound(int new_val);// Set upper bound of sand texture
 
 //  Need to reimplement these methods inhereted from QGLWidget
 protected:

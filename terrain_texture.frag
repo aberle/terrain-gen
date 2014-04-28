@@ -10,7 +10,11 @@ uniform sampler2D rock_texture;
 uniform sampler2D grass_texture;
 uniform sampler2D snow_texture;
 uniform sampler2D sand_texture;
+
+// Layer height values
 uniform float blend;
+uniform float sand_low;
+uniform float sand_high;
 
 void main()
 {
@@ -26,8 +30,8 @@ void main()
    float blend_amt =  blend;
 
    // Calculate sand texturing
-   float sand_low  = -15.0;
-   float sand_high =  30.0;
+   //float sand_low  = -15.0;
+   //float sand_high =  30.0;
 
    vec3 sand  = (smoothstep(sand_low -blend_amt, sand_low +blend_amt, position.y) - 
                  smoothstep(sand_high-blend_amt, sand_high+blend_amt, position.y)) 
