@@ -372,7 +372,6 @@ int terrainCreateDL()
                 (startL - i)*terrainStepLength);// * stepL);
         }
         glEnd();
-        glDisable(GL_TEXTURE_2D);
     }
     glEndList();
 
