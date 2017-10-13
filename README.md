@@ -1,9 +1,12 @@
 ## Nicholas Aberle: Simplex Noise Terrain Generation
 
+### Prerequisites
+sudo apt-get install freeglut3 freeglut3-dev qtchooser qt4-default
+
 ### To compile and run
 ```
-qmake
-make
+qmake -qt=qt4
+make -j4
 ./tGen
 ```
 
