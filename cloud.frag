@@ -1,6 +1,6 @@
-// Large point texture
-
 #version 120
+
+// Large point texture
 
 uniform sampler2D sprite;
 uniform float alpha;

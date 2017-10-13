@@ -1,6 +1,6 @@
-//  Clouds
-
 #version 120
+
+//  Clouds
 
 uniform float time;
 
